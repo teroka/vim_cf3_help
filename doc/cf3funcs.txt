@@ -1,0 +1,4875 @@
+*accessedbefore*
+
+   Prototype: accessedbefore(newer, older)
+
+   Return type: class
+
+   Description: Compares the atime fields of two files.
+
+   Return true if newer was accessed before older.
+
+   Arguments:
+
+     * newer : Newer filename, in the range "?(/.*)
+     * older : Older filename, in the range "?(/.*)
+
+   Example:
+
+     body common control
+     {
+       bundlesequence  => { "example" };
+     }
+
+     bundle agent example
+     {    
+       classes:
+
+         "do_it" and => { accessedbefore("/tmp/earlier","/tmp/later"), "linux" };
+
+       reports:
+
+         do_it::
+
+           "The secret changes have been accessed after the reference time";
+     }
+
+   Example output:
+
+     touch /tmp/reference
+     touch /tmp/secretfile
+
+     /var/cfengine/bin/cf-agent -f ./unit_accessed_before.cf -K
+     R: The secret changes have been accessed after the reference time
+
+   -^
+*accumulated*
+
+   Prototype: accumulated(years, months, days, hours, minutes, seconds)
+
+   Return type: int
+
+   Description: Convert an accumulated amount of time into a system
+   representation.
+
+   The accumulated function measures total accumulated runtime. Arguments are
+   applied additively, so that accumulated(0,0,2,27,90,0) means "2 days, 27
+   hours and 90 minutes of runtime" ". However, you are strongly encouraged
+   to keep your usage of accumulated sensible and readable; for example,
+   accumulated(0,0,0,48,0,0) or accumulated(0,0,0,0,90,0).
+
+   Arguments:
+
+     * years, in the range 0,1000
+
+   Years of run time. For convenience in conversion, a year of runtime is
+   always 365 days (one year equals 31,536,000 seconds).
+
+     * month, in the range 0,1000
+
+   Months of run time. For convenience in conversion, a month of runtime is
+   always equal to 30 days of runtime (one month equals 2,592,000 seconds).
+
+     * days, in the range 0,1000
+
+   Days of runtime (one day equals 86,400 seconds)
+
+     * hours, in the range 0,1000
+
+   Hours of runtime
+
+     * minutes, in the range 0,1000
+
+   Minutes of runtime 0-59
+
+     * seconds, in the range 0,40000
+
+   Seconds of runtime
+
+   Example:
+
+     bundle agent testbundle
+     {
+       processes:
+
+        ".*"
+
+           process_count   => anyprocs,
+           process_select  => proc_finder;
+
+       reports:
+
+        any_procs::
+
+          "Found processes in range";
+     }
+
+     body process_select proc_finder
+     {
+       ttime_range => irange(accumulated(0,0,0,0,2,0),accumulated(0,0,0,0,20,0));
+       process_result => "ttime";
+     }
+
+     body process_count anyprocs
+     {
+       match_range => "0,0";
+       out_of_range_define => { "any_procs" };
+     }
+
+   In the example we look for processes that have accumulated between 2 and
+   20 minutes of total run time.
+
+   -^
+*ago*
+
+   Prototype: ago(years, months, days, hours, minutes, seconds)
+
+   Return type: int
+
+   Description: Convert a time relative to now to an integer system
+   representation.
+
+   The ago function measures time relative to now. Arguments are applied in
+   order, so that ago(0,18,55,27,0,0) means "18 months, 55 days, and 27 hours
+   ago". However, you are strongly encouraged to keep your usage of ago
+   sensible and readable, e.g., ago(0,0,120,0,0,0) or ago(0,0,0,72,0,0).
+
+   Arguments:
+
+     * years, in the range 0,1000
+
+   Years of run time. For convenience in conversion, a year of runtime is
+   always 365 days (one year equals 31,536,000 seconds).
+
+     * month, in the range 0,1000
+
+   Months of run time. For convenience in conversion, a month of runtime is
+   always equal to 30 days of runtime (one month equals 2,592,000 seconds).
+
+     * days, in the range 0,1000
+
+   Days of runtime (one day equals 86,400 seconds)
+
+     * hours, in the range 0,1000
+
+   Hours of runtime
+
+     * minutes, in the range 0,1000
+
+   Minutes of runtime 0-59
+
+     * seconds, in the range 0,40000
+
+   Seconds of runtime
+
+   Example:
+
+     bundle agent testbundle
+     {
+       processes:
+
+        ".*"
+
+           process_count   => anyprocs,
+           process_select  => proc_finder;
+
+       reports:
+
+        any_procs::
+
+          "Found processes out of range";
+     }
+
+
+     body process_select proc_finder
+
+     {
+       # Processes started between 5.5 hours and 20 minutes ago
+       stime_range => irange(ago(0,0,0,5,30,0),ago(0,0,0,0,20,0));
+       process_result => "stime";
+     }
+
+     body process_count anyprocs
+
+     {
+       match_range => "0,0";
+       out_of_range_define => { "any_procs" };
+     }
+
+   -^
+*and*
+
+   Prototype: and(...)
+
+   Return type: string
+
+   Description: Returns whether all arguments evaluate to true.
+
+   Arguments: A list of classes and class expressions
+
+   Example:
+
+     commands:
+       "/usr/bin/generate_config $(config)"
+         ifvarclass => and(not(fileexists("/etc/config/$(config)")), "generating_configs");
+
+   Notes:
+
+   History: Was introduced in 3.2.0, Nova 2.1.0 (2011)
+
+   -^
+*canonify*
+
+   Prototype: canonify(text)
+
+   Return type: string
+
+   Description: Convert an arbitrary string text into a legal class name.
+
+   This function turns arbitrary text into class data.
+
+   Arguments:
+
+     * text : String containing non-identifier characters, in the range .*
+
+   Example:
+
+     commands:
+
+        "/var/cfengine/bin/$(component)"
+
+            ifvarclass => canonify("start_$(component)");
+
+   See also: classify()).
+
+   -^
+*changedbefore*
+
+   Prototype: changedbefore(newer, older)
+
+   Return type: class
+
+   Description: Compares the ctime fields of two files.
+
+   Returns true if newer was changed before older, otherwise returns false.
+
+   Change times include both file permissions and file contents. Comparisons
+   like this are normally used for updating files (like the 'make' command).
+
+   Arguments:
+
+     * newer : Newer filename, in the range "?(/.*)
+     * older : Older filename, in the range "?(/.*)
+
+   Example:
+
+     body common control
+     {
+       bundlesequence  => { "example" };
+     }
+
+     bundle agent example
+     {    
+       classes:
+
+         "do_it" and => { changedbefore("/tmp/earlier","/tmp/later"), "linux" };
+
+       reports:
+
+         do_it::
+
+           "The derived file needs updating";
+     }
+
+   -^
+*classesmatching*
+
+   Prototype: classesmatching(regex)
+
+   Return type: slist
+
+   Description: Return the list of set classes matching regex.
+
+   This function searches for the regular expression in the list of currently
+   set classes (in order hard, then soft, then local to the current bundle).
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+
+   A regular expression matching zero or more classes in the current list of
+   set classes. The regular expression is unanchored.
+
+   Example:
+
+     body common control
+     {
+       bundlesequence => { run };
+     }
+
+     bundle agent run
+     {
+       vars:
+           "all" slist => classesmatching(".*");
+           "c" slist => classesmatching("cfengine");
+       reports:
+           "All classes = $(all)";
+           "Classes matching 'cfengine' = $(c)";
+     }
+
+   Note: This function replaces the allclasses.txt static file available in
+   older versions of CFEngine.
+
+   -^
+*classify*
+
+   Prototype: classify(text)
+
+   Return type: class
+
+   Description: Returns whether the canonicalization of text is a currently
+   set class.
+
+   This is useful for transforming variables into classes.
+
+   Arguments:
+
+     * text : Input string, in the range .*
+
+   Example:
+
+     classes:
+
+      "i_am_the_policy_host" expression => classify("master.example.org");
+
+   See also: canonify()
+
+   -^
+*classmatch*
+
+   Prototype: classmatch(regex)
+
+   Return type: class
+
+   Description: Tests whether regex matches any currently set class.
+
+   Returns true if the regular expression matches any currently defined
+   class, otherwise returns false.
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+
+   A regular expression matched against the current list of set classes. The
+   regular expression must match a complete class for the expression to be
+   true (i.e. the regex is anchored).
+
+   Example:
+
+     body common control
+     {
+       bundlesequence  => { "example" };
+     }
+
+     bundle agent example
+     {    
+       classes:
+
+         "do_it" and => { classmatch(".*_cfengine_com"), "linux" };
+
+       reports:
+
+         do_it::
+
+           "Host matches pattern";
+     }
+
+   -^
+*concat*
+
+   Prototype: concat(...)
+
+   Return type: string
+
+   Description: Concatenates all arguments into a string.
+
+   Example:
+
+     commands:
+       "/usr/bin/generate_config $(config)"
+         ifvarclass => concat("have_config_", canonify("$(config)"));
+
+   History: Was introduced in 3.2.0, Nova 2.1.0 (2011)
+
+   -^
+*countclassesmatching*
+
+   Prototype: countclassesmatching(regex)
+
+   Return type: int
+
+   Description: Count the number of defined classes matching regex.
+
+   This function matches classes, using a regular expression that should
+   match the whole line. The function returns the number of classes matched.
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+
+   A regular expression matching zero or more classes in the current list of
+   set classes. The regular expression is anchored, meaning it must match a
+   complete class.
+
+   Example:
+
+     bundle agent example
+     {
+       vars:
+         "num" int => countclassesmatching("entropy.*low");
+
+       reports:
+         "Found $(num) classes matching";
+     }
+
+   -^
+*countlinesmatching*
+
+   Prototype: countlinesmatching(regex, filename)
+
+   Return type: int
+
+   Description: Count the number of lines in file filename matching regex.
+
+   This function matches lines in the named file, using a regular expression
+   that should match the whole line, and returns the number of lines matched.
+
+   Arguments:
+
+     * regex, in the range .*
+
+   A regular expression matching zero or more lines. The regular expression
+   is anchored,
+
+     * filename, in the range "?(/.*)
+
+   The name of the file to be examined.
+
+   Example:
+
+     bundle agent example
+     {    
+       vars:
+
+         "no" int => countlinesmatching("m.*","/etc/passwd");
+
+       reports:
+         "Found $(no) lines matching";
+     }
+
+   -^
+*difference*
+
+   Prototype: difference(list1, list2)
+
+   Return type: slist
+
+   Description: Returns the unique elements in list1 that are not in list2.
+
+   Arguments:
+
+     * list1 : The name of the base list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+     * list2 : The name of the subtracted list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     bundle agent test
+     {
+       vars:
+           "a" slist => { 1,2,3,"x" };
+           "b" slist => { "x" };
+
+           "listname1" slist => { "a", "b" };
+           "listname2" slist => { "a", "b" };
+           "$(listname1)_str" string => join(",", $(listname1));
+
+           "diff_$(listname1)_$(listname2)" slist => difference($(listname1), $(listname2));
+           "diff_$(listname1)_$(listname2)_str" string => join(",", "diff_$(listname1)_$(listname2)");
+
+       reports:
+           "The difference of list '$($(listname1)_str)' with '$($(listname2)_str)' is '$(diff_$(listname1)_$(listname2)_str)'";
+ }
+
+   See also: intersection().
+
+   -^
+*dirname*
+
+   Prototype: dirname(path)
+
+   Return type: string
+
+   Description: Return the parent directory name for given path.
+
+   This function returns the directory name for path. If path is a directory,
+   then the name of its parent directory is returned.
+
+   Arguments:
+
+     * path : File path, in the range .*
+
+   Example:
+
+     vars:
+       "apache_dir" string => dirname("/etc/apache2/httpd.conf");
+
+   Notes:
+
+   History: Was introduced in 3.3.0, Nova 2.2.0 (2011)
+
+   See also: lastnode(), filestat(), splitstring().
+
+   -^
+*diskfree*
+
+   Prototype: diskfree(path)
+
+   Return type: int
+
+   Descriptions: Return the free space (in KB) available on the current
+   partition of path.
+
+   If path is not found, this function returns 0.
+
+   Arguments:
+
+     * path : File system directory, in the range "?(/.*)
+
+   Example:
+
+     bundle agent example
+     {    
+       vars:
+         "free" int => diskfree("/tmp");
+
+       reports:
+         "Freedisk $(free)";
+     }
+
+   -^
+*escape*
+
+   Prototype: escape(text)
+
+   Return type: string
+
+   Description: Escape regular expression characters in text.
+
+   This function is useful for making inputs readable when a regular
+   expression is required, but the literal string contains special
+   characters. The function simply 'escapes' all the regular expression
+   characters, so that you do not have to.
+
+   Arguments:
+
+     * text : IP address or string to escape, in the range .*
+
+   Example:
+
+     bundle server control
+     {
+       allowconnects => { "127\.0\.0\.1", escape("192.168.2.1") };
+     }
+
+   In this example, the string "192.168.2.1" is "escaped" to be equivalent to
+   "192\.168\.2\.1", because without the backslashes, the regular expression
+   "192.168.2.1" will also match the IP ranges "192.168.201", "192.168.231",
+   etc (since the dot character means "match any character" when used in a
+   regular expression).
+
+   Notes:
+
+   History: This function was introduced in CFEngine version 3.0.4 (2010)
+
+   -^
+*every*
+
+   Prototype: every(regex, list)
+
+   Return type: class
+
+   Description: Returns whether every element in the variable list matches
+   regex.
+
+   Arguments:
+
+     * regex : Regular expression to find, in the range .*
+
+   The regular expression is unanchored.
+
+     * list : The name of the list variable to check, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent test
+
+ {
+   classes:
+       "every1" expression => every(".*", "test");
+       "every2" expression => every(".", "test");
+
+   vars:
+       "test" slist => {
+                         1,2,3,
+                         "one", "two", "three",
+                         "long string",
+                         "four", "fix", "six",
+                         "one", "two", "three",
+                       };
+
+   reports:
+       "The test list is $(test)";
+     every1::
+       "every() test 1 passed";
+     !every1::
+       "every() test 1 failed";
+     every2::
+       "every() test 2 failed";
+     !every2::
+       "every() test 2 passed";
+ }
+
+   See also: filter(), some(), and none().
+
+   -^
+*execresult*
+
+   Prototype: execresult(command, shell)
+
+   Return type: string
+
+   Description: Execute command and return output as string.
+
+   If the command is not found, the result will be the empty string.
+
+   Arguments:
+
+     * command : Fully qualified command path, in the range "?(/.*)
+     * shell : Shell encapsulation option, in the range useshell,noshell
+
+   Decides whether a shell will be used to encapsulate the command. This is
+   necessary in order to combine commands with pipes etc, but remember that
+   each command requires a new process that reads in files beyond CFEngine's
+   control. Thus using a shell is both a performance hog and a potential
+   security issue.
+
+   Example:
+
+ body common control
+ {
+ bundlesequence  => { "example" };
+ }
+
+ bundle agent example
+
+ {    
+ vars:
+
+   "my_result" string => execresult("/bin/ls /tmp","noshell");
+
+ reports:
+
+   linux::
+
+     "Variable is $(my_result)";
+
+ }
+
+   Notes: you should never use this function to execute commands that make
+   changes to the system, or perform lengthy computations. Such an operation
+   is beyond CFEngine's ability to guarantee convergence, and on multiple
+   passes and during syntax verification these function calls are executed,
+   resulting in system changes that are 'covert'. Calls to execresult should
+   be for discovery and information extraction only.
+
+   Change: policy change in CFEngine 3.0.5. Previously newlines were changed
+   for spaces, now newlines are preserved.
+
+   -^
+*fileexists*
+
+   Prototype: fileexists(filename)
+
+   Return type: class
+
+   Description: Returns whether the file filename can be accessed.
+
+   The file must exist, and the user must have access permissions to the file
+   for this function to return true.
+
+   Arguments:
+
+     * filename : File object name, in the range "?(/.*)
+
+   Example:
+
+     body common control
+     {
+       bundlesequence  => { "example" };
+     }
+
+     bundle agent example
+     {    
+       classes:
+
+         "exists" expression => fileexists("/etc/passwd");
+
+       reports:
+
+         exists::
+
+           "File exists";
+     }
+
+   -^
+*filesexist*
+
+   Prototype: filesexist(list)
+
+   Return type: class
+
+   Description: Returns whether all the files in list can be accessed.
+
+   All files must exist, and the user must have access permissions to them
+   for this function to return true.
+
+   Arguments:
+
+     * list : Reference to a list variable, in the range @[(][a-zA-Z0-9]+[)]
+
+   Example:
+
+     body common control
+
+     {
+       bundlesequence  => { "example" };
+     }
+
+     bundle agent example
+
+     {    
+       vars:
+
+         "mylist" slist => { "/tmp/a", "/tmp/b", "/tmp/c" };
+
+       classes:
+
+         "exists" expression => filesexist("@(mylist)");
+
+       reports:
+
+         exists::
+
+           "All files exist";
+
+         !exists::
+
+           "Not all files exist";
+     }
+
+   -^
+*filesize*
+
+   Prototype: filesize(filename)
+
+   Return type: int
+
+   Description: Returns the size of the file filename in bytes.
+
+   If the file object does not exist, the function call fails and the
+   variable does not expand.
+
+   Arguments:
+
+     * filename : File object name, in the range "?(/.*)
+
+   Example:
+
+     bundle agent example
+     {    
+       vars:
+
+         "exists" int => filesize("/etc/passwd");
+         "nexists" int => filesize("/etc/passwdx");
+
+       reports:
+         "File size $(exists)";
+         "Does not exist $(nexists)";
+     }
+
+   History: Was introduced in version 3.1.3,Nova 2.0.2 (2010)
+
+   -^
+*filestat*
+
+   Prototype: filestat(filename, field)
+
+   Return type: string
+
+   Description: Returns the requested file field.
+
+   If the file object does not exist, the function call fails and the
+   variable does not expand.
+
+   Arguments:
+
+     * filename : File object name, in the range "?(/.*)
+     * field : Name of field to retrieve, in the range
+          * size
+          * gid
+          * uid
+          * ino
+          * nlink
+          * ctime
+          * atime
+          * mtime
+          * mode
+          * modeoct
+          * permstr
+          * permoct
+          * type
+          * devno
+          * dev_minor
+          * dev_major
+          * basename
+          * dirname
+
+   Example:
+
+     bundle agent fileinfo(f)
+     {
+       vars:
+           "fields" slist => splitstring("size,gid,uid,ino,nlink,ctime,atime,mtime,mode,modeoct,permstr,permoct,type,devno,dev_minor,dev_major,basename,dirname", ",", 999);
+
+           "stat[$(f)][$(fields)]" string => filestat($(f), $(fields));
+
+       reports:
+           "$(this.bundle): file $(f) has $(fields) = $(stat[$(f)][$(fields)])";
+     }
+
+   Notes:
+
+   The list of fields may be extended as needed.
+
+   History: Was introduced in version 3.5.0,Enterprise 3.1 (2013)
+
+   See also: lastnode(), dirname(), splitstring().
+
+   -^
+*filter*
+
+   Prototype: filter(filter, list, is_regex, invert, max_return)
+
+   Return type: slist
+
+   Description: Transforms a list into a subset thereof.
+
+   This is a generic filtering function that returns a list of up to
+   max_return elements in list that match the filtering rules specified in
+   filter, is_regex and invert.
+
+   Arguments:
+
+     * filter : Anchored regular expression or static string to find, in the
+       range .*
+     * list : The name of the list variable to check, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * is_regex_ : Boolean
+
+   Treat filter as a regular expression or as a static string.
+
+     * invert : Boolean
+
+   Invert filter.
+
+     * max_return : Maximum number of elements to return in the range
+       0,999999999
+
+   Example:
+
+     bundle agent test
+     {
+       vars:
+           "test" slist => {
+                             1,2,3,
+                             "one", "two", "three",
+                             "long string",
+                             "one", "two", "three",
+                           };
+
+           "test_grep" slist => filter("[0-9]", "test", "true", "false", 999);
+           "test_exact1" slist => filter("one", "test", "false", "false", 999);
+           "test_exact2" slist => filter(".", "test", "false", "false", 999);
+           "test_invert" slist => filter("[0-9]", "test", "true", "true", 999);
+           "test_max2" slist => filter(".*", "test", "true", "false", 2);
+           "test_max0" slist => filter(".*", "test", "true", "false", 0);
+           "grep" slist => grep("[0-9]", "test");
+
+       reports:
+           "The test list is $(test)";
+           "The grepped list is $(grep)";
+           "The filter-grepped list is $(test_grep)";
+           "The filter-exact list, looking for 'one' is $(test_exact1)";
+           "This line should not appear: $(test_exact2)";
+           "The filter-invert list, looking for non-digits, is $(test_invert)";
+           "The filter-bound list, matching at most 2 items, is $(test_max2)";
+           "This line should not appear: $(test_max0)";
+     }
+
+   See also: grep(), every(), some(), and none().
+
+   -^
+*format*
+
+   Prototype: format(string, ...)
+
+   Return type: string
+
+   Description: Applies sprintf-style formatting to a given string.
+
+   This function will format numbers (o, x, d and f) or strings (s) but not
+   potentially dangerous things like individual characters or pointer
+   offsets.
+
+   This function will fail if it doesn't have enough arguments; if any format
+   specifier contains the modifiers hLqjzt; or if any format specifier is not
+   one of doxfs.
+
+   Example:
+
+     bundle agent run
+     {
+       vars:
+           "v" string => "2.5.6";
+           "vlist" slist => splitstring($(v), "\.", 3);
+           "padded" string => format("%04d%04d%04d", nth("vlist", 0), nth("vlist", 1), nth("vlist", 2));
+           "a" string => format("%10.10s", "x");
+           "b" string => format("%-10.10s", "x");
+           "c" string => format("%04d", 1);
+           "d" string => format("%07.2f", 1);
+           "e" string => format("hello %s, my IP is %s", $(sys.policy_hub), $(sys.ipv4));
+
+       reports:
+           "version $(v) => padded $(padded)";
+           "%10.10s on 'x' => '$(a)'";
+           "%-10.10s on 'x' => '$(b)'";
+           "%04d on '1' => '$(c)'";
+           "%07.2f on '1' => '$(d)'";
+           "hello my IP is... => '$(e)'";
+     }
+
+   -^
+*getenv*
+
+   Prototype: getenv(variable, maxlength)
+
+   Return type: string
+
+   Description: Return the environment variable variable, truncated at
+   maxlength characters
+
+   Returns an empty string if the environment variable is not defined.
+   maxlength is used to avoid unexpectedly large return values, which could
+   lead to security issues. Choose a reasonable value based on the
+   environment variable you are querying.
+
+   Arguments
+
+     * variable : Name of environment variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * maxlength : Maximum number of characters to read , in the range
+       0,99999999999
+
+   Example:
+
+ bundle agent example
+ {
+ vars:
+
+    "myvar" string => getenv("PATH","20");
+
+ classes:
+
+   "isdefined" not => strcmp("$(myvar)","");
+
+ reports:
+
+   isdefined::
+
+    "The path is $(myvar)";
+
+   !isdefined::
+
+    "The named variable PATH does not exist";
+
+ }
+
+   Notes:
+
+   History: This function was introduced in CFEngine version 3.0.4 (2010)
+
+   -^
+*getfields*
+
+   Prototype: getfields(regex, filename, split, array_lval)
+
+   Return type: int
+
+   Description: Fill arrayl_lval with fields in the lines from file filename
+   that match regex, split on split.
+
+   The function returns the number of lines matched. This function is most
+   useful when you want only the first matching line (e.g., to mimic the
+   behavior of the getpwnam(3) on the file /etc/passwd). If you want to
+   examine all matching lines, use readstringarray() instead.
+
+   Arguments:
+
+     * regex : Regular expression to match line, in the range .*
+
+   A regular expression matching one or more lines. The regular expression is
+   anchored, meaning it must match the entire line.
+
+     * filename : Filename to read, in the range "?(/.*)
+
+   The name of the file to be examined.
+
+     * split : Regular expression to split fields, in the range .*
+
+   A regex pattern that is used to parse the field separator(s) to split up
+   the file into items
+
+     * array_lval : Return array name, in the range .*
+
+   The base name of the array that returns the values.
+
+   Example:
+
+   bundle agent example
+   {    
+     vars:
+
+       "no" int => getfields("mark:.*","/etc/passwd",":","userdata");
+
+     reports:
+         "Found $(no) lines matching";
+         "Mark's homedir = $(userdata[6])";
+   }
+
+   Notes: This function matches lines (using a regular expression) in the
+   named file, and splits the first matched line into fields (using a second
+   regular expression), placing these into a named array whose elements are
+   array[1],array[2],... This is useful for examining user data in the Unix
+   password or group files.
+
+   -^
+*getgid*
+
+   Prototype: getgid(groupname)
+
+   Return type: int
+
+   Description: Return the integer group id of the group groupname on this
+   host.
+
+   If the named group does not exist, the function will fail and the variable
+   will not be defined.
+
+   Arguments:
+
+     * groupname : Group name as text, in the range .*
+
+   Example:
+
+     bundle agent example
+     {    
+     vars:
+
+       "gid" int => getgid("users");
+
+     reports:
+       "Users gid is $(gid)";
+     }
+
+   Notes: On Windows, which does not support group ids, the variable will not
+   be defined.
+
+   -^
+*getindices*
+
+   Prototype: getindices(array)
+
+   Return type: slist
+
+   Description: Returns a list of keys in array.
+
+   Make sure you specify the correct scope when supplying the name of the
+   variable.
+
+   Arguments:
+
+     * array : array identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     bundle agent example
+     {
+     vars:
+
+       "v[index_1]" string => "value_1";
+       "v[index_2]" string => "value_2";
+
+       "parameter_name" slist => getindices("v");
+
+     reports:
+        "Found index: $(parameter_name)";
+     }
+
+   -^
+*getuid*
+
+   Prototype: getuid(username)
+
+   Return type: int
+
+   Description: Return the integer user id of the named user on this host
+
+   If the named user is not registered the variable will not be defined.
+
+   Arguments:
+
+     * username : User name in text, in the range .*
+
+   Example:
+
+     bundle agent example
+     {
+     vars:
+
+       "uid" int => getuid("mark");
+
+     reports:
+       "Users uid is $(uid)";
+     }
+
+   Notes: On Windows, which does not support user ids, the variable will not
+   be defined.
+
+   -^
+*getusers*
+
+   Prototype: getusers(exclude_names, exclude_ids)
+
+   Return type: slist
+
+   Description: Returns a list of all users defined, except those names in
+   exclude_names and uids in exclude_ids
+
+   Arguments:
+
+     * exclude_names : Comma separated list of User names, in the range .*
+     * exclude_ids : Comma separated list of UserID numbers, in the range .*
+
+   Example:
+
+     vars:
+       "allusers" slist => getusers("zenoss,mysql,at","12,0");
+
+     reports:
+       "Found user $(allusers)";
+
+   Notes: This function is currently only available on Unix-like systems.
+
+   History: Was introduced in version 3.1.0b1,Nova 2.0.0b1 (2010).
+
+   -^
+*getvalues*
+
+   Prototype: getvalues(array)
+
+   Return type: slist
+
+   Description: Returns the list of values in array.
+
+   If the array contains list values, then all of the list elements are
+   flattened into a single list to make the return value a list.
+
+   Make sure you specify the correct scope when supplying the name of the
+   variable.
+
+   Arguments:
+
+     * array : array identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent example
+ {
+ vars:
+
+   "v[index_1]" string => "value_1";
+   "v[index_2]" string => "value_2";
+
+   "values" slist => getvalues("v");
+
+ reports:
+    "Found values: $(values)";
+
+ }
+
+   Notes:
+
+   -^
+*grep*
+
+   Prototype: grep(regex, list)
+
+   Return type: slist
+
+   Description: Returns the sub-list if items in list matching the regular
+   expression regex.
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+
+   The regex is anchored.
+
+     * list : list identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent test
+ {
+ vars:
+
+   "mylist" slist => { "One", "Two", "Three", "Four", "Five" };
+   "sublist" slist => grep("T.*","mylist");
+   "empty_list" slist => grep("ive","mylist");
+
+ reports:
+   "Item: $(sublist)";
+ }
+
+   -^
+*groupexists*
+
+   Prototype: groupexists(group)
+
+   Return type: class
+
+   Description: Returns whether a group group exists on this host.
+
+   The group may be specified by name or identifier.
+
+   Arguments:
+
+     * group : Group name or identifier, in the range .*
+
+   Example:
+
+ body common control
+
+ {
+ bundlesequence  => { "example" };
+ }
+
+ ###########################################################
+
+ bundle agent example
+
+ {    
+ classes:
+
+   "gname" expression => groupexists("users");
+   "gid"   expression => groupexists("100");
+
+ reports:
+
+   gname::
+
+     "Group exists by name";
+
+   gid::
+
+     "Group exists by id";
+
+ }
+
+   -^
+*hash*
+
+   Prototype: hash(input, algorithm)
+
+   Return type: string
+
+   Description: Return the hash of input using the hash algorithm.
+
+   Hash functions are extremely sensitive to input. You should not expect to
+   get the same answer from this function as you would from every other tool,
+   since it depends on how whitespace and end of file characters are handled.
+
+   Arguments:
+
+     * input : Input text, in the range .*
+     * algorithm : Hash or digest algorithm, one of
+          * md5
+          * sha1
+          * sha256
+          * sha512
+          * sha384
+          * crypt
+
+   Example:
+
+ bundle agent example
+
+ {    
+ vars:
+
+   "md5" string => hash("CFEngine is not cryptic","md5");
+
+ reports:
+     "Hashed to: $(md5)";
+ }
+
+   -^
+*hashmatch*
+
+   Prototype: hashmatch(filename, algorthm, hash)
+
+   Return type: class
+
+   Description: Compute the hash of file filename using the hash algorithm
+   and test if it matches hash.
+
+   This function may be used to determine whether a system has a particular
+   version of a binary file (e.g. software patch).
+
+   Arguments:
+
+     * filename : Filename to hash, in the range "?(/.*)
+     * algorithm : Hash or digest algorithm, one of
+          * md5
+          * sha1
+          * sha256
+          * sha512
+          * sha384
+          * crypt
+     * hash : ASCII representation of hash for comparison, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent example
+ {    
+ classes:
+
+   "matches" expression => hashmatch("/etc/passwd","md5","c5068b7c2b1707f8939b283a2758a691");
+
+ reports:
+
+   matches::
+
+     "File has correct version";
+
+ }
+
+   -^
+*host2ip*
+
+   Prototype: host2ip(hostname)
+
+   Return type: string
+
+   Description: Returns the primary name-service IP address for the named
+   host hostname.
+
+   Uses whatever configured name service is used by the resolver library to
+   translate hostname into an IP address. It will return an IPv6 address by
+   preference if such an address exists. This function uses the standard
+   lookup procedure for a name, so it mimics internal processes and can
+   therefore be used not only to cache multiple lookups in the configuration,
+   but to debug the behavior of the resolver.
+
+   Arguments:
+
+     * hostname : Host name in ascii, in the range .*
+
+   Example:
+
+     bundle server control
+     {
+       allowconnects         => { escape(host2ip("www.example.com")) };
+     }
+
+   History: This function was introduced in CFEngine version 3.0.4 (2010)
+
+   -^
+*hostinnetgroup*
+
+   Prototype: hostinnetgroup(netgroup)
+
+   Return type: class
+
+   Description: True if the current host is in the named netgroup.
+
+   Arguments:
+
+     * netgroup : Netgroup name, in the range .*
+
+   Example:
+
+     classes:
+
+       "ingroup" expression => hostinnetgroup("my_net_group");
+
+   -^
+*hostrange*
+
+   Prototype: hostrange(prefix, range)
+
+   Return type: class
+
+   Description: Returns whether the current host lies in the range of
+   enumerated hostnames specified with prefix.
+
+   This is a pattern matching function for non-regular (enumerated)
+   expressions.
+
+   Arguments:
+
+     * prefix : Hostname prefix, in the range .*
+     * range : Enumerated range, in the range .*
+
+   Example:
+
+ bundle agent example
+ {    
+ classes:
+
+   "compute_nodes" expression => hostrange("cpu-","01-32");
+
+ reports:
+
+   compute_nodes::
+
+     "No computer is a cluster";
+
+ }
+
+   -^
+*hostsseen*
+
+   Prototype: hostsseen(horizon, seen, field)
+
+   Return type: slist
+
+   Description: Returns a list with the information field of hosts that were
+   seen or not seen within the last horizon hours.
+
+   Finds a list of hosts seen by a CFEngine remote connection on the current
+   host within the number of hours specified in horizon. The argument seen
+   may be lastseen or notseen, the latter selecting all hosts not observed to
+   have connected within the specified time.
+
+   Arguments:
+
+     * horizon : Horizon since last seen in hours, in the range 0,99999999999
+     * seen : Selection criteria, one of
+          * lastseen
+          * notseen
+     * field : Type of return value desired, one of
+          * name
+          * address
+
+   Example:
+
+ bundle agent test
+ {
+ vars:
+
+   "myhosts" slist => { hostsseen("inf","lastseen","address") };
+
+ reports:
+   "Found client/peer: $(myhosts)";
+ }
+
+   -^
+*hostswithclass*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: hostswithclass(class, field)
+
+   Description: Returns a list from the CFEngine Database with the
+   information field of hosts on which classs is set.
+
+   On CFEngine Enterprise, this function can be used to return a list of
+   hostnames or ip-addresses of hosts that have a given class set. Note that
+   this function only works locally on the hub, but allows the hub to
+   construct custom configuration files for (classes of) hosts.
+
+   Return type: slist
+
+   Arguments:
+
+     * class : Class name to look for, in the range [a-zA-Z0-9_]+
+     * field : Type of return value desired, one of
+          * name
+          * address
+
+   Example:
+
+     body common control
+     {
+     bundlesequence => { "test" };
+     inputs => { "cfengine_stdlib.cf" };
+     }
+
+
+     bundle agent test
+     {
+     vars:
+
+     am_policy_hub::
+      "host_list" slist => hostswithclass( "debian", "name" );
+
+     files:
+     am_policy_hub::
+       "/tmp/master_config.cfg"
+              edit_line => insert_lines("host=$(host_list)"),
+                 create => "true";
+     }
+
+   History: Was introduced in 3.3.0, Nova 2.2.0 (2012)
+
+   -^
+*hubknowledge*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: hubknowledge(id)
+
+   Description: Read global knowledge from the CFEngine Database host by id.
+
+   This function is only available in CFEngine Enterprise. It is intended for
+   use in distributed orchestration. It is recommended that you use this
+   function sparingly with guards, as it contributes to network traffic and
+   depends on the network for its function. Unlike remotescalar(), the value
+   of hubknowledge is not cached.
+
+   This function behaves similarly to the remotescalar function, except that
+   it always gets its information from the CFEngine Database by an encrypted
+   connection. It is designed for spreading globally calibrated information
+   about a CFEngine system back to the client machines. The data available
+   through this channel are generated automatically by discovery, unlike
+   remotescalar which accesses user defined data.
+
+   This function asks for an identifier. It is up to the server to interpret
+   what this means and to return a value of its choosing. If the identifier
+   matches a persistent scalar variable (such as is used to count distributed
+   processes in CFEngine Enterprise) then this will be returned
+   preferentially. If no such variable is found, then the server will look
+   for a literal string in a server bundle with a handle that matches the
+   requested object.
+
+   Return type: string
+
+   Arguments:
+
+     * id : identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     vars:
+
+       guard::
+
+        "global_number" string => hubknowledge("number_variable");
+
+   -^
+*ifelse*
+
+   Prototype: ifelse(...)
+
+   Return type: string
+
+   Description: Evaluate each pair of arguments up to the last one as a
+   (class, value) tuple, returning value if class is set.
+
+   If none are set, returns the last argument.
+
+   Arguments:
+
+   The ifelse function is like a multi-level if-else statement.It was
+   inspired by Oracle's DECODE function. It must have an odd number of
+   arguments (from 1 to N). The last argument is the default value, like the
+   else clause in standard programming languages. Every pair of arguments
+   before the last one are evaluated as a pair. If the first one evaluates
+   true (as if you had used it in a class expression, so it can be more than
+   just a class name, it's a whole context like Tuesday.linux.!verbose) then
+   the second one is returned.
+
+   Generally, if ifelse were called with arguments (a1, a2, b1, b2, c), the
+   behavior expressed as pseudo-code is:
+
+     if a1 then return a2
+     else-if b1 then return b2
+     else return c
+
+   (But again, note that any odd number of arguments is supported.)
+
+   The ifelse function is extremely useful when you want to avoid explicitly
+   stating the negative of all the expected cases; this problem is commonly
+   seen like so:
+
+     class1.class2::
+       "myvar" string => "x";
+
+     class3.!class2::
+       "myvar" string => "y";
+
+     !((class1.class2)||class3.!class2)::
+       "myvar" string => "z";
+
+   That's hard to read and error-prone (do you know how class2 will affect
+   the default case?). Here's the alternative with ifelse:
+
+     "myvar" string => ifelse("class1.class2", "x",
+                              "class3.!class2", "y",
+                              "z");
+
+   Example:
+
+ bundle agent example
+ {    
+   classes:
+       "myclass" expression => "any";
+       "myclass2" expression => "any";
+       "secondpass" expression => "any";
+   vars:
+       # we need to use the secondpass class because on the first pass,
+       # myclass and myclass2 are not defined yet
+
+     secondpass::
+
+       # result: { "1", "single string parameter", "hardclass OK", "bundle class OK", "5 parameters OK" }
+
+       "mylist" slist => {
+*ifelse*(1),
+*ifelse*("single string parameter"),
+*ifelse*("cfengine", "hardclass OK", "hardclass broken"),
+*ifelse*("myclass.myclass2", "bundle class OK", "bundle class broken"),
+*ifelse*("this is not true", "5 parameters broken",
+                                  "this is also not true", "5 parameters broken 2",
+                                  "5 parameters OK"),
+                         };
+
+   reports:
+       "ifelse result list: $(mylist)";
+ }
+
+   -^
+*intersection*
+
+   Prototype: intersection(list1, list2)
+
+   Return type: slist
+
+   Description: Returns the unique elements in list1 that are also in list2.
+
+   Arguments:
+
+     * list1 : The name of the base list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+     * list2 : The name of the intersected list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     bundle agent test
+     {
+       vars:
+           "a" slist => { 1,2,3,"x" };
+           "b" slist => { "x" };
+
+           "listname1" slist => { "a", "b" };
+           "listname2" slist => { "a", "b" };
+           "$(listname1)_str" string => join(",", $(listname1));
+
+           "int_$(listname1)_$(listname2)" slist => intersection($(listname1), $(listname2));
+           "int_$(listname1)_$(listname2)_str" string => join(",", "int_$(listname1)_$(listname2)");
+
+       reports:
+           "The intersection of list '$($(listname1)_str)' with '$($(listname2)_str)' is '$(int_$(listname1)_$(listname2)_str)'";
+     }
+
+   See also: difference().
+
+   -^
+*ip2host*
+
+   Prototype: ip2host(ip)
+
+   Return type: string
+
+   Description: Returns the primary name-service host name for the IP address
+   ip.
+
+   Uses whatever configured name service is used by the resolver library to
+   translate an IP address to a hostname. IPv6 addresses will also resolve,
+   if supported by the resolver library.
+
+   Note that DNS lookups may take time and thus cause CFEngine agents to wait
+   for responses, slowing their progress significantly.
+
+   Arguments:
+
+     * ip : IP address (IPv4 or IPv6), in the range .*
+
+   Example:
+
+ bundle agent reverse_lookup
+ {
+ vars:
+  "local4" string => ip2host("127.0.0.1");
+  "local6" string => ip2host("::1");
+
+
+ reports:
+   "local4 is $(local4)";
+   "local6 is $(local6)";
+ }
+
+   History: Was introduced in version 3.1.3, Nova 2.0.2 (2010)
+
+   -^
+*iprange*
+
+   Prototype: iprange(range)
+
+   Return type: class
+
+   Description: Returns whether the current host lies in the range of IP
+   addresses specified.
+
+   Pattern matching based on IP addresses.
+
+   Arguments:
+
+     * range : IP address range syntax, in the range .*
+
+   Example:
+
+ bundle agent example
+ {
+ classes:
+
+   "adhoc_group_1" expression => iprange("128.39.89.10-15");
+   "adhoc_group_2" expression => iprange("128.39.74.1/23");
+
+ reports:
+
+   adhoc_group_1::
+
+     "Some numerology";
+
+   adhoc_group_2::
+
+     "The masked warriors";
+ }
+
+   -^
+*irange*
+
+   Prototype: irange(arg1, arg2)
+
+   Return type: irange[int,int]
+
+   Description: Define a range of integer values for CFEngine internal use.
+
+   Used for any scalar attribute which requires an integer range. You can
+   generally interchangeably say "1,10" or irange("1","10"). However, if you
+   want to create a range of dates or times, you must use irange if you also
+   use the functions ago, now, accumulated, etc.
+
+   Arguments:
+
+     * arg1 : Integer, in the range -99999999999,9999999999
+     * arg2 : Integer, in the range -99999999999,9999999999
+
+   Example:
+
+     irange("1","100");
+
+     irange(ago(0,0,0,1,30,0), "0");
+
+   -^
+*isdir*
+
+   Prototype: isdir(filename)
+
+   Return type: class
+
+   Description: Returns whether the named object filename is a directory.
+
+   The CFEngine process must have access to filename in order for this to
+   work.
+
+   Arguments:
+
+     * filename : File object name, in the range "?(/.*)
+
+   Example:
+
+ bundle agent example
+ {    
+ classes:
+
+   "isdir" expression => isdir("/etc");
+
+ reports:
+
+   isdir::
+
+     "Directory exists..";
+
+ }
+
+   -^
+*isexecutable*
+
+   Prototype: isexecutable(filaname)
+
+   Return type: class
+
+   Description: Returns whether the named object filename has execution
+   rights for the current user.
+
+   Arguments:
+
+     * filename : File object name, in the range "?(/.*)
+
+   Example:
+
+ classes:
+
+   "yes" expression => isexecutable("/bin/ls");
+
+   History: Was introduced in version 3.1.0b1,Nova 2.0.0b1 (2010)
+
+   -^
+*isgreaterthan*
+
+   Prototype: isgreaterthan(value1, value2)
+
+   Return type: class
+
+   Description: Returns whether value1 is greater than value2.
+
+   The comparison is made numerically if possible. If the values are strings,
+   the result is identical to that of comparing with strcmp().
+
+   Arguments:
+
+     * value1 : Larger string or value, in the range .*
+     * value2 : Smaller string or value, in the range .*
+
+   Example:
+
+ bundle agent example
+ {
+ classes:
+
+   "ok" expression => isgreaterthan("1","0");
+
+ reports:
+
+   ok::
+
+     "Assertion is true";
+
+  !ok::
+
+   "Assertion is false";
+
+ }
+
+   -^
+*islessthan*
+
+   Prototype: islessthan(value1, value2)
+
+   Return type: class
+
+   Description: Returns whether value1 is less than value2.
+
+   The comparison is made numerically if possible. If the values are strings,
+   the result is the inverse to that of comparing with strcmp().
+
+   Arguments:
+
+     * value1 : Smaller string or value, in the range .*
+     * value2 : Larger string or value, in the range .*
+
+   Example:
+
+ bundle agent test
+ {
+ classes:
+
+   "ok" expression => islessthan("0","1");
+
+ reports:
+
+   ok::
+
+     "Assertion is true";
+
+  !ok::
+
+   "Assertion is false";
+
+ }
+
+   See also: isgreaterthan().
+
+   -^
+*islink*
+
+   Prototype: islink(filename)
+
+   Return type: class
+
+   Description: Returns whether the named object filename is a symbolic link.
+
+   The link node must both exist and be a symbolic link. Hard links cannot be
+   detected using this function.
+
+   Arguments:
+
+     * filename : File object name, in the range "?(/.*)
+
+   Example:
+
+ bundle agent example
+ {    
+ classes:
+
+   "islink" expression => islink("/tmp/link");
+
+ reports:
+
+   islink::
+
+     "It's a link.";
+
+ }
+
+   -^
+*isnewerthan*
+
+   Prototype: isnewerthan(newer, older)
+
+   Return type: class
+
+   Description: Returns whether the file newer is newer (modified later) than
+   the file older.
+
+   This function compares the modification time (mtime) of the files,
+   referring to changes of content only.
+
+   Arguments:
+
+     * arg1 : Newer file name, in the range "?(/.*)
+     * arg2 : Older file name, in the range "?(/.*)
+
+   Example:
+
+     bundle agent example
+     {    
+     classes:
+
+       "do_it" and => { isnewerthan("/tmp/later","/tmp/earlier"), "linux" };
+
+     reports:
+
+       do_it::
+
+         "The derived file needs updating";
+     }
+
+   -^
+*isplain*
+
+   Prototype: isplain(filename)
+
+   Return type: class
+
+   Description: Returns whether the named object filename is a plain/regular
+   file.
+
+   Arguments:
+
+     * arg1 : File object name, in the range "?(/.*)
+
+   Example:
+
+ bundle agent example
+ {
+ classes:
+
+   "isplain" expression => isplain("/etc/passwd");
+
+ reports:
+
+   isplain::
+
+     "File exists..";
+
+ }
+
+   -^
+*isvariable*
+
+   Prototype: isvariable(var)
+
+   Return type: class
+
+   Description: Returns whether a variable named var is defined.
+
+   The variable need only exist. This says nothing about its value. Use
+   regcmp to check variable values.
+
+   Arguments:
+
+     * var : Variable identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent example
+ {    
+ vars:
+
+   "bla" string => "xyz..";
+
+ classes:
+
+   "exists" expression => isvariable("bla");
+
+ reports:
+
+   exists::
+
+     "Variable exists: \"$(bla)\"..";
+
+ }
+
+   -^
+*join*
+
+   Prototype: join(glue, list)
+
+   Return type: string
+
+   Description: Join the items of list into a string, using the conjunction
+   in glue.
+
+   Converts a string of type list into a scalar variable using the join
+   string in first argument.
+
+   Arguments:
+
+     * glue : Join glue-string, in the range .*
+     * list : CFEngine list identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent test
+ {
+ vars:
+
+   "mylist" slist => { "one", "two", "three", "four", "five" };
+
+   "scalar" string => join("->","mylist");
+
+ reports:
+   "Concatenated $(scalar)";
+ }
+
+   -^
+*lastnode*
+
+   Prototype: lastnode(string, separator)
+
+   Return type: string
+
+   Description: Returns the part of string after the last separator.
+
+   This function returns the final node in a chain, given a regular
+   expression to split on. This is mainly useful for finding leaf-names of
+   files, from a fully qualified path name.
+
+   Arguments:
+
+     * string : Input string, in the range .*
+     * separator : Link separator, e.g. / or :, in the range .*
+
+   Example:
+
+ bundle agent yes
+ {
+ vars:
+
+   "path1" string => "/one/two/last1";
+   "path2" string => "one:two:last2";
+
+   "last1" string => lastnode("$(path1)","/");
+   "last2" string => lastnode("$(path2)",":");
+
+   "last3" string => lastnode("$(path2)","/");
+
+ reports:
+   "Last = $(last1),$(last2),$(last3)";
+
+ }
+
+   See also: filestat(), dirname(), splitstring().
+
+   -^
+*laterthan*
+
+   Prototype: laterthan(years, months, days, hours, minutes, seconds)
+
+   Return type: class
+
+   Description: Returns whether the current time is later than the given date
+   and time.
+
+   The arguments are standard time (See Function on).
+
+   Arguments:
+
+     * years : year in the range 1970,3000
+     * month : month, in the range 1,12
+     * day : day of month, in the range 1,31
+     * hour : hour of day, in the range 0,23
+     * minute : minute, in the range 0,59
+     * second : second, in the range 0,59
+
+   Example:
+
+     classes:
+
+       "after_deadline" expression => laterthan(2000,1,1,0,0,0);
+
+   -^
+*ldaparray*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: ldaparray(array, uri, dn, filter, scope, security)
+
+   Return type: class
+
+   Description: Fills array with the entire LDAP record, and returns whether
+   there was a match for the search.
+
+   This function retrieves an entire record with all elements and populates
+   an associative array with the entries. It returns a class that is true if
+   there was a match for the search, and false if nothing was retrieved.
+
+   Arguments:
+
+     * array : Array name, in the range .*
+
+   String name of the array to populate with the result of the search
+
+     * uri : URI, in the range .*
+
+   String value of the ldap server. e.g. "ldap://ldap.cfengine.com.no"
+
+     * dn : Distinguished name, in the range .*
+
+   Distinguished name, an ldap formatted name built from components, e.g.
+   "dc=cfengine,dc=com".
+
+     * filter : Filter, in the range .*
+
+   String filter criterion, in ldap search, e.g. "(sn=User)".
+
+     * scope : Search scope policy, one of
+
+          * subtree
+          * onelevel
+          * base
+     * security : Security level, one of
+
+          * none
+          * ssl
+          * sasl
+
+   Menu option indicating the encryption and authentication settings for
+   communication with the LDAP server. These features might be subject to
+   machine and server capabilities.
+
+   Example:
+
+ classes:
+
+    "gotdata" expression => ldaparray(
+                                     "myarray",
+                                     "ldap://ldap.example.org",
+                                     "dc=cfengine,dc=com",
+                                     "(uid=mark)",
+                                     "subtree",
+                                     "none");
+
+   -^
+*ldaplist*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: ldaplist(uri, dn, filter, record, scope, security)
+
+   Return type: slist
+
+   Description: Returns a list with all named values from multiple ldap
+   records.
+
+   This function retrieves a single field from all matching LDAP records
+   identified by the search parameters.
+
+   Arguments:
+
+     * uri : URI, in the range .*
+
+   String value of the ldap server. e.g. "ldap://ldap.cfengine.com.no"
+
+     * dn : Distinguished name, in the range .*
+
+   Distinguished name, an ldap formatted name built from components, e.g.
+   "dc=cfengine,dc=com".
+
+     * filter : Filter, in the range .*
+
+   String filter criterion, in ldap search, e.g. "(sn=User)".
+
+     * record : Record name, in the range .*
+
+   String value with the name of the single record to be retrieved, e.g. uid.
+
+     * scope : Search scope policy, one of
+
+          * subtree
+          * onelevel
+          * base
+     * security : Security level, one of
+
+          * none
+          * ssl
+          * sasl
+
+   Menu option indicating the encryption and authentication settings for
+   communication with the LDAP server. These features might be subject to
+   machine and server capabilities.
+
+   Example:
+
+ vars:
+
+    # Get all matching values for "uid" - should be a single record match
+
+   "list" slist =>  ldaplist(
+                            "ldap://ldap.example.org",
+                            "dc=cfengine,dc=com",
+                            "(sn=User)",
+                            "uid",
+                            "subtree",
+                            "none"
+                            );
+
+   -^
+*ldapvalue*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: ldapvalue(uri, dn, filter, record, scope, security)
+
+   Return type: string
+
+   Description: Returns the first matching named value from ldap.
+
+   This function retrieves a single field from a single LDAP record
+   identified by the search parameters. The first matching value it taken.
+
+   Arguments:
+
+     * uri : URI, in the range .*
+
+   String value of the ldap server. e.g. "ldap://ldap.cfengine.com.no"
+
+     * dn : Distinguished name, in the range .*
+
+   Distinguished name, an ldap formatted name built from components, e.g.
+   "dc=cfengine,dc=com".
+
+     * filter : Filter, in the range .*
+
+   String filter criterion, in ldap search, e.g. "(sn=User)".
+
+     * record : Record name, in the range .*
+
+   String value with the name of the single record to be retrieved, e.g. uid.
+
+     * scope : Search scope policy, one of
+
+          * subtree
+          * onelevel
+          * base
+     * security : Security level, one of
+
+          * none
+          * ssl
+          * sasl
+
+   Menu option indicating the encryption and authentication settings for
+   communication with the LDAP server. These features might be subject to
+   machine and server capabilities.
+
+   Example:
+
+ vars:
+
+    # Get the first matching value for "uid" in schema
+
+   "value" string => ldapvalue(
+                              "ldap://ldap.example.org",
+                              "dc=cfengine,dc=com",
+                              "(sn=User)",
+                              "uid",
+                              "subtree",
+                              "none"
+                              );
+
+   -^
+*length*
+
+   Prototype: length(list)
+
+   Return type: int
+
+   Description: Returns the length of list.
+
+   Arguments:
+
+     * list : The name of the list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent test
+
+ {
+   vars:
+       "test" slist => {
+                         1,2,3,
+                         "one", "two", "three",
+                         "long string",
+                         "four", "fix", "six",
+                         "one", "two", "three",
+                       };
+
+       "length" int => length("test");
+       "test_str" string => join(",", "test");
+
+   reports:
+       "The test list is $(test_str)";
+       "The test list has $(length) elements";
+ }
+
+   See also: nth().
+
+   -^
+*lsdir*
+
+   Prototype: lsdir(path, regex, include_base)
+
+   Return type: slist
+
+   Description: Returns a list of files in the directory path matching the
+   regular expression regex.
+
+   In case include_base is true, full paths are returned, otherwise only
+   names relative to the the directory are returned.
+
+   Arguments:
+
+     * path : Path to base directory, in the range .+
+     * regex : Regular expression to match files or blank, in the range .*
+     * include_base : Boolean
+
+   Include the base path in the list.
+
+   Example:
+
+     vars:
+       "listfiles" slist => lsdir("/etc", "(passwd|shadow).*", "true");
+
+   Notes:
+
+   History: Was introduced in 3.3.0, Nova 2.2.0 (2011)
+
+   -^
+*maparray*
+
+   Prototype: maparray(pattern, array)
+
+   Return type: slist
+
+   Description: Returns a list with each array element modified by a pattern.
+
+   The $(this.k) and $(this.v) variables expand to the key and value of the
+   array element, similar to the way this is available for maplist.
+
+   If a value in the array is an slist, you'll get one result for each value
+   (implicit looping).
+
+   The order of the array keys is not guaranteed. Use the sort function if
+   you need order in the resulting output.
+
+   Arguments:
+
+     * pattern : Pattern based on $(this.k) and $(this.v) as original text,
+       in the range .*
+     * array : The name of the array variable to map, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent run
+ {
+   vars:
+       "todo[1]" string => "2";
+       "todo[one]" string => "two";
+       "todo[3999]" slist => { "big", "small" };
+       "map" slist => maparray("yes $(this.k) $(this.v)", "todo");
+
+   reports:
+       "Hello $(map)";
+ }
+
+   Output:
+
+ Hello yes 1 2
+ Hello yes one two
+ Hello yes 3999 big
+ Hello yes 3999 small
+
+   -^
+*maplist*
+
+   Prototype: maplist(pattern, list)
+
+   Return type: slist
+
+   Description: Return a list with each element in list modified by a
+   pattern.
+
+   The $(this) variable expands to the currently processed entry from list.
+   This is essentially like the map() function in Perl, and applies to lists.
+
+   Arguments:
+
+     * pattern : Pattern based on $(this) as original text, in the range .*
+     * list : The name of the list variable to map, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent test
+ {
+ vars:
+
+   "oldlist" slist => { "a", "b", "c" };
+   "newlist" slist => maplist("Element ($(this))","oldlist");
+
+ reports:
+   "Transform: $(newlist)";
+ }
+
+   History: Was introduced in 3.3.0, Nova 2.2.0 (2011)
+
+   -^
+*none*
+
+   Prototype: none(regex, list)
+
+   Return type: class
+
+   Description: Returns whether no element in list matches the regular
+   expression regex.
+
+   Arguments:
+
+     * regex : Unanchored regular expression to find, in the range .*
+     * list : The name of the list variable to check, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent example
+ {
+   classes:
+       "none1" expression => none("jebadiah", "test");
+       "none2" expression => none("2", "test");
+
+   vars:
+       "test" slist => {
+                         1,2,3,
+                         "one", "two", "three",
+                         "long string",
+                         "four", "fix", "six",
+                         "one", "two", "three",
+                       };
+
+   reports:
+       "The test list is $(test)";
+     none1::
+       "none() test 1 passed";
+     !none1::
+       "none() test 1 failed";
+     none2::
+       "none() test 2 failed";
+     !none2::
+       "none() test 2 passed";
+ }
+
+   See also: filter(), every(), and some().
+
+   -^
+*not*
+
+   Prototype: not(expression)
+
+   Return type: string
+
+   Description: Calculate whether expression is false
+
+   Arguments:
+
+     * expression : Class expression, in the range .*
+
+   Example:
+
+ commands:
+   "/usr/bin/generate_config $(config)"
+     ifvarclass => not(fileexists("/etc/config/$(config)"));
+
+   Notes:
+
+   History: Was introduced in 3.2.0, Nova 2.1.0 (2011)
+
+   -^
+*now*
+
+   Prototype: now()
+
+   Return type: int
+
+   Description: Return the current time in system representation.
+
+   Example:
+
+     body file_select zero_age
+     {
+       mtime       => irange(ago(1,0,0,0,0,0),now);
+       file_result => "mtime";
+     }
+
+   -^
+*nth*
+
+   Prototype: nth(list, position)
+
+   Return type: string
+
+   Description: Returns the element of list at zero-based position.
+
+   If an invalid position (below 0 or above the size of the list minus 1) is
+   requested, this function does not return a valid value.
+
+   Arguments:
+
+     * list : The name of the list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * position : Zero-based position of element in the range 0,999999999
+
+   Example:
+
+ bundle agent test
+ {
+   vars:
+       "test" slist => {
+                         1,2,3,
+                         "one", "two", "three",
+                         "long string",
+                         "four", "fix", "six",
+                         "one", "two", "three",
+                       };
+
+       "nth" slist => { 1, 2, 6, 10, 11, 1000 };
+
+       "test[$(nth)]" string => nth("test", $(nth));
+       "test[0]" string => nth("test", 0);
+
+   reports:
+       "The test list is $(test)";
+       "element #$(nth) of the test list: $(test[$(nth)])";
+       "element #0 of the test list: $(test[0])";
+ }
+
+   See also: length().
+
+   -^
+*on*
+
+   Prototype: on(years, months, days, hours, minutes, seconds)
+
+   Return type: int
+
+   Description: Returns the specified date/time in integer system
+   representation.
+
+   The specified date/time is an absolute date in the local timezone.
+
+   Arguments:
+
+     * years : year in the range 1970,3000
+     * month : month, in the range 1,12
+     * day : day of month, in the range 1,31
+     * hour : hour of day, in the range 0,23
+     * minute : minute, in the range 0,59
+     * second : second, in the range 0,59
+
+   Example:
+
+     body file_select zero_age
+     {
+       mtime       => irange(on(2000,1,1,0,0,0),now);
+       file_result => "mtime";
+     }
+
+   Notes: In process matching, dates could be wrong by an hour depending on
+   Daylight Savings Time / Summer Time. This is a known bug to be fixed.
+
+   -^
+*or*
+
+   Prototype: or(...)
+
+   Return type: string
+
+   Description: Calculate whether any argument evaluates to true
+
+   Example:
+
+     commands:
+       "/usr/bin/generate_config $(config)"
+         ifvarclass => or(not(fileexists("/etc/config/$(config)")), "force_configs");
+
+   Notes:
+
+   History: Was introduced in 3.2.0, Nova 2.1.0 (2011)
+
+   -^
+*parseintarray*
+*parserealarray*
+*parsestringarray*
+                          parse[int|real|string]array
+
+   Prototype: parseintarray(array, input, comment, split, maxentries,
+   maxbytes)
+   Prototype: parserealarray(array, input, comment, split, maxentries,
+   maxbytes)
+   Prototype: parsestringarray(array, input, comment, split, maxentries,
+   maxbytes)
+
+   Return type: int
+
+   Description: Parses up to maxentries values from the first maxbytes bytes
+   in string input and populates array. Returns the dimension.
+
+   These functions mirror the exact behavior of their
+   [read[int|real|string]array()][read[int|real|string]array] counterparts,
+   but read data from a variable instead of a file. By making data readable
+   from a variable, data driven policies can be kept inline.
+
+   Arguments:
+
+     * array : Array identifier to populate, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * input : A string to parse for input data, in the range "?(/.*)
+     * comment : Unanchored regex matching comments, in the range .*
+     * split : Unanchored regex to split data, in the range .*
+     * maxentries : Maximum number of entries to read, in the range
+       0,99999999999
+     * maxbytes : Maximum bytes to read, in the range 0,99999999999
+
+   Example:
+
+     bundle agent test(f)
+     {
+       vars:
+          # Define data inline for convenience
+         "table"   string =>
+           "1:2
+           3:4
+           5:6";
+
+        "dim" int => parseintarray(
+                                 "items",
+                         "$(table)",
+                         "\s*#[^\n]*",
+                         ":",
+                         "1000",
+                         "200000"
+                         );
+
+        "keys" slist => getindices("items");
+
+       reports:
+           "$(keys)";
+     }
+
+   History: Was introduced in version 3.1.5a1, Nova 2.1.0 (2011)
+
+   -^
+*parsestringarrayidx*
+
+   Prototype: parsestringarrayidx(array, input, comment, split, maxentries,
+   maxbytes)
+
+   Return type: int
+
+   Description: Populates the two-dimensional array array with up to
+   maxentries fields from the first maxbytes bytes of the string input.
+
+   This function mirrors the exact behavior of readstringarrayidx(), but
+   reads data from a variable instead of a file. By making data readable from
+   a variable, data driven policies can be kept inline.
+
+   Arguments:
+
+     * array : Array identifier to populate, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * input : A string to parse for input data, in the range "?(/.*)
+     * comment : Regex matching comments, in the range .*
+     * split : Regex to split data, in the range .*
+     * maxentries : Maximum number of entries to read, in the range
+       0,99999999999
+     * maxbytes : Maximum bytes to read, in the range 0,99999999999
+
+   Example:
+
+     bundle agent test(f)
+     {
+     vars:
+       # Define data inline for convenience
+       "table"   string => "one: a
+                            two: b
+                          three: c";
+
+     #######################################
+
+      "dim" int => parsestringarrayidx(
+                       "items",
+                       "$(table)",
+                       "\s*#[^\n]*",
+                       ":",
+                       "1000",
+                       "200000"
+                       );
+
+      "keys" slist => getindices("items");
+
+     reports:
+         "$(keys)";
+     }
+
+   History: Was introduced in version 3.1.5, Nova 2.1.0 (2011)
+
+   -^
+*peerleader*
+
+   Prototype: peerleader(filename, regex, groupsize)
+
+   Return type: string
+
+   Description: Returns the assigned peer-leader of the partition to which
+   the current host belongs.
+
+   This function returns the name of a host that may be considered the leader
+   of a group of peers of the current host. Peers are defined according to a
+   list of hosts, provided as a file in filename. This file should contain a
+   list (one per line), possibly with comments matching regex, of fully
+   qualified host names. CFEngine breaks up this list into non-overlapping
+   groups of up to groupsize, each of which has a leader that is the first
+   host in the group.
+
+   The current host should belong to this file if it is expected to interact
+   with the others. The function returns nothing if the host does not belong
+   to the list.
+
+   Arguments:
+
+     * filename : File name of host list, in the range "?(/.*)
+
+   A path to a file containing the list of hosts.
+
+     * regex : Comment regex pattern, in the range .*
+
+   A pattern that matches a legal comment in the file. The regex is
+   unanchored, meaning it may match a partial line. Comments are stripped as
+   the file is read.
+
+     * arg3 : Peer group size, in the range 0,99999999999
+
+   A number between 2 and 64 which represents the number of peers in a
+   peer-group. An arbitrary limit of 64 is set on groups to avoid nonsensical
+   promises.
+
+   Example:
+
+   Example file:
+
+      one
+      two
+      three # this is a comment
+      four
+      five
+      six
+      seven
+      eight
+      nine
+      ten
+      eleven
+      twelve
+      etc
+
+     bundle agent peers
+     {
+     vars:
+
+       "mygroup" slist => peers("/tmp/hostlist","#.*",4);
+
+       "myleader" string => peerleader("/tmp/hostlist","#.*",4);
+
+       "all_leaders" slist => peerleaders("/tmp/hostlist","#.*",4);
+
+     reports:
+
+        "mypeer $(mygroup)";
+        "myleader $(myleader)";
+        "another leader $(all_leaders)";
+     }
+
+   -^
+*peerleaders*
+
+   Prototype: peerleaders(filename, regex, groupsize)
+
+   Return type: slist
+
+   Description: Returns a list of peer leaders from the named partitioning.
+
+   Peers are defined according to a list of hosts, provided in filename. This
+   file should contain a list (one per line), possibly with comments matching
+   regex, of fully qualified host names. CFEngine breaks up this list into
+   non-overlapping groups of up to groupsize, each of which has a leader that
+   is the first host in the group.
+
+   The current host does not need to belong to this file.
+
+   Arguments:
+
+     * filename : File name of host list, in the range "?(/.*)
+
+   A path to a file containing the list of hosts.
+
+     * regex : Comment regex pattern, in the range .*
+
+   A pattern that matches a legal comment in the file. The regex is
+   unanchored, meaning it may match a partial line. Comments are stripped as
+   the file is read.
+
+     * arg3 : Peer group size, in the range 0,99999999999
+
+   A number between 2 and 64 which represents the number of peers in a
+   peer-group. An arbitrary limit of 64 is set on groups to avoid nonsensical
+   promises.
+
+   Example:
+
+   Example file:
+
+      one
+      two
+      three # this is a comment
+      four
+      five
+      six
+      seven
+      eight
+      nine
+      ten
+      eleven
+      twelve
+      etc
+
+     bundle agent peers
+     {
+     vars:
+
+       "mygroup" slist => peers("/tmp/hostlist","#.*",4);
+
+       "myleader" string => peerleader("/tmp/hostlist","#.*",4);
+
+       "all_leaders" slist => peerleaders("/tmp/hostlist","#.*",4);
+
+     reports:
+
+        "mypeer $(mygroup)";
+        "myleader $(myleader)";
+        "another leader $(all_leaders)";
+
+     }
+
+   -^
+*peers*
+
+   Prototype: peers(filname, regex, groupsize)
+
+   Return type: slist
+
+   Description: Returns a list of peers from the partition to which the
+   current host belongs, excluding the current host.
+
+   This function returns a list of hostnames that may be considered peers of
+   the current host. Peers are defined according to a list of hosts, provided
+   in filename. This file should contain a list (one per line), possible with
+   comments matching regex, of fully qualified host names. CFEngine breaks up
+   this list into non-overlapping groups of up to groupsize, each of which
+   has a leader that is the first host in the group.
+
+   The current host should belong to this file if it is expected to interact
+   with the others. The function returns nothing if the current host does not
+   belong to the list.
+
+   Arguments:
+
+     * filename : File name of host list, in the range "?(/.*)
+
+   A path to a file containing the list of hosts.
+
+     * regex : Comment regex pattern, in the range .*
+
+   A pattern that matches a legal comment in the file. The regex is
+   unanchored, meaning it may match a partial line. Comments are stripped as
+   the file is read.
+
+     * arg3 : Peer group size, in the range 0,99999999999
+
+   A number between 2 and 64 which represents the number of peers in a
+   peer-group. An arbitrary limit of 64 is set on groups to avoid nonsensical
+   promises.
+
+   Example:
+
+   Example file:
+
+      one
+      two
+      three # this is a comment
+      four
+      five
+      six
+      seven
+      eight
+      nine
+      ten
+      eleven
+      twelve
+      etc
+
+ bundle agent peers
+ {
+ vars:
+
+   "mygroup" slist => peers("/tmp/hostlist","#.*",4);
+
+   "myleader" string => peerleader("/tmp/hostlist","#.*",4);
+
+   "all_leaders" slist => peerleaders("/tmp/hostlist","#.*",4);
+
+ reports:
+
+    "mypeer $(mygroup)";
+    "myleader $(myleader)";
+    "another leader $(all_leaders)";
+
+ }
+
+   -^
+*product*
+
+   Prototype: product(list)
+
+   Return type: real
+
+   Description: Returns the product of the reals in list.
+
+   This function might be used for simple ring computation. Of course, you
+   could easily combine product with readstringarray or readreallist etc., to
+   collect summary information from a source external to CFEngine.
+
+   Arguments:
+
+     * list : A list of arbitrary real values, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     bundle agent test
+     {
+     vars:
+
+       "series" rlist => { "1.1", "2.2", "3.3", "5.5", "7.7" };
+
+       "prod" real => product("series");
+       "sum"  real => sum("series");
+
+     reports:
+         "Product result: $(prod) > $(sum)";
+     }
+
+   History: Was introduced in version 3.1.0b1,Nova 2.0.0b1 (2010)
+
+   -^
+*randomint*
+
+   Prototype: randomint(lower, upper)
+
+   Return type: int
+
+   Description: Returns a random integer between lower and upper.
+
+   The limits must be integer values and the resulting numbers are based on
+   the entropy of the md5 algorithm.
+
+   The function will be re-evaluated on each pass if it is not restricted
+   with a context class expression as shown in the example.
+
+   Arguments:
+
+     * lower : Lower inclusive bound, in the range -99999999999,9999999999
+     * upper : Upper inclusive bound, in the range -99999999999,9999999999
+
+   Example:
+
+     bundle agent randomint_example
+     {
+       vars:
+           "low"    string => "4";
+           "high"   string => "60";
+
+           "random"    int => randomint("$(low)", "$(high)"),
+                    policy => "free";
+
+         !classes1::
+           "random1"
+             string  => "$(random)",
+             handle  => "var_random1",
+             comment => "this should only be set on the first pass";
+
+         classes1.!classes2::
+
+           "random2"
+             string     => "$(random)",
+             handle     => "var_random2",
+             comment    => "this should only be set on the second pass";
+
+         classes2::
+
+           "random3"
+             string     => "$(random)",
+             handle     => "var_random3",
+             comment    => "this should only be set on the third pass";
+
+       classes:
+           "classes3" expression => "classes2";
+           "classes2" expression => "classes1";
+           "classes1" expression => "any";
+
+       reports:
+         classes3::
+           "Random Numbers: $(random1), $(random2), $(random3)";
+     }
+
+   Example output:
+
+ R: Random Numbers: 32, 56, 37
+
+   -^
+*readfile*
+
+   Prototype: readfile(filename, maxbytes)
+
+   Return type: string
+
+   Description: Returns the first maxbytes bytes from file filename.
+
+   Arguments:
+
+     * filename : File name, in the range "?(/.*)
+     * maxbytes : Maximum number of bytes to read, in the range 0,99999999999
+
+   Example:
+
+     vars:
+
+      "xxx"  
+         string => readfile( "/home/mark/tmp/testfile" , "33" );
+
+   -^
+*readintarray*
+*readrealarray*
+*readstringarray*
+                           read[int|real|string]array
+
+   Prototype: readintarray(array, filename, comment, split, maxentries,
+   maxbytes)
+   Prototype: readrealarray(array, filename, comment, split, maxentries,
+   maxbytes)
+   Prototype: readstringarray(array, filename, comment, split, maxentries,
+   maxbytes)
+
+   Return type: int
+
+   Description: Populates array with up to maxentries values, parsed from the
+   first maxbytes bytes in file filename.
+
+   Reads a two dimensional array from a file. One dimension is separated by
+   the regex split, the other by the lines in the file. The first field of
+   the lines names the first array argument.
+
+   The comment field will strip out unwanted patterns from the file being
+   read, leaving unstripped characters to be split into fields. Using the
+   empty string ("") indicates no comments.
+
+   Returns the number of keys in the array, i.e., the number of lines
+   matched.
+
+   Arguments:
+
+     * array : Array identifier to populate, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * filename : File name to read, in the range "?(/.*)
+     * comment : Unanchored regex matching comments, in the range .*
+     * split : Unanchored regex to split lines into fields, in the range .*
+     * maxentries : Maximum number of entries to read, in the range
+       0,99999999999
+     * maxbytes : Maximum bytes to read, in the range 0,99999999999
+
+   Example:
+
+     readintarray("array_name","/tmp/array","#[^\n]*",":",10,4000);
+
+   Input:
+
+      1: 5:7:21:13
+      2:19:8:14:14
+      3:45:1:78:22
+      4:64:2:98:99
+
+   Results in:
+
+      array_name[1][0]   1
+      array_name[1][1]   5
+      array_name[1][2]   7
+      array_name[1][3]   21
+      array_name[1][4]   13
+      array_name[2][0]   2
+      array_name[2][1]   19
+      array_name[2][2]   8
+      array_name[2][3]   14
+      array_name[2][4]   14
+      array_name[3][0]   3
+      array_name[3][1]   45
+      array_name[3][2]   1
+      array_name[3][3]   78
+      array_name[3][4]   22
+      array_name[4][0]   4
+      array_name[4][1]   64
+      array_name[4][2]   2
+      array_name[4][3]   98
+      array_name[4][4]   99
+
+     readstringarray("array_name","/tmp/array","\s*#[^\n]*",":",10,4000);
+
+   Input:
+
+      at:x:25:25:Batch jobs daemon:/var/spool/atjobs:/bin/bash
+      avahi:x:103:105:User for Avahi:/var/run/avahi-daemon:/bin/false    # Disallow login
+      beagleindex:x:104:106:User for Beagle indexing:/var/cache/beagle:/bin/bash
+      bin:x:1:1:bin:/bin:/bin/bash
+      # Daemon has the default shell
+      daemon:x:2:2:Daemon:/sbin:
+
+   Results in a systematically indexed map of the file:
+
+      ...
+      array_name[daemon][0]   daemon
+      array_name[daemon][1]   x
+      array_name[daemon][2]   2
+      array_name[daemon][3]   2
+      array_name[daemon][4]   Daemon
+      array_name[daemon][5]   /sbin
+      array_name[daemon][6]   /bin/bash
+      ...
+      array_name[at][3]       25
+      array_name[at][4]       Batch jobs daemon
+      array_name[at][5]       /var/spool/atjobs
+      array_name[at][6]       /bin/bash
+      ...
+      array_name[games][3]    100
+      array_name[games][4]    Games account
+      array_name[games][5]    /var/games
+      array_name[games][6]    /bin/bash
+      ...
+
+   -^
+*readintlist*
+*readreallist*
+*readstringlist*
+                           read[int|real|string]list
+
+   Prototype: readintlist(filename, comment, split, maxentries, maxbytes)
+   Prototype: readreallist(filename, comment, split, maxentries, maxbytes)
+   Prototype: readstringlist(filename, comment, split, maxentries, maxbytes)
+
+   Return type: ilist, rlist or slist
+
+   Description: Splits the file filename into separated values and returns
+   the list.
+
+   The comment regex will strip out unwanted patterns from the file being
+   read, leaving unstripped characters to be split into fields. Using the
+   empty string ("") indicates no comments.
+
+   Arguments:
+
+     * filename : File name to read, in the range "?(/.*)
+     * comment : Unanchored regex matching comments, in the range .*
+     * split : Unanchored regex to split data, in the range .*
+     * maxentries : Maximum number of entries to read, in the range
+       0,99999999999
+     * maxbytes : Maximum bytes to read, in the range 0,99999999999
+
+   Example:
+
+     bundle agent example
+     {    
+     vars:
+
+       "integers" ilist => readintlist("/tmp/listofint","#.*","[\n]",10,400);
+       "strings" slist => readstringlist("/tmp/listofstring", "#.*", "\s", 10, 400);
+       "reals" rlist => readreallist("/tmp/listofreal","#.*","[\n]",10,400);
+
+     reports:
+
+         "List entry: $(mylist)";
+
+     }
+
+   -^
+*readstringarrayidx*
+
+   Prototype: readstringarrayidx(array, filename, comment, split, maxentries,
+   maxbytes)
+
+   Return type: int
+
+   Description: Populates the two-dimensional array array with up to
+   maxentries fields from the first maxbytes bytes of file filename.
+
+   One dimension is separated by the regex split, the other by the the lines
+   in the file. The array arguments are both integer indexes, allowing for
+   non-identifiers at first field (e.g. duplicates or names with spaces),
+   unlike readstringarray.
+
+   The comment field will strip out unwanted patterns from the file being
+   read, leaving unstripped characters to be split into fields. Using the
+   empty string ("") indicates no comments.
+
+   Returns an integer number of keys in the array (i.e., the number of lines
+   matched). If you only want the fields in the first matching line (e.g., to
+   mimic the behavior of the getpwnam(3) on the file /etc/passwd), use
+   getfields(), instead.
+
+   Arguments:
+
+     * array : Array identifier to populate, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * filename : A string to parse for input data, in the range "?(/.*)
+     * comment : Unanchored regex matching comments, in the range .*
+     * split : Unanchored regex to split data, in the range .*
+     * maxentries : Maximum number of entries to read, in the range
+       0,99999999999
+     * maxbytes : Maximum bytes to read, in the range 0,99999999999
+
+   Example:
+
+     vars:
+
+       "dim_array"
+
+          int =>  readstringarrayidx("array_name","/tmp/array","\s*#[^\n]*",":",10,4000);
+
+   Input example:
+
+      at spaced:x:25:25:Batch jobs daemon:/var/spool/atjobs:/bin/bash
+      duplicate:x:103:105:User for Avahi:/var/run/avahi-daemon:/bin/false    # Disallow login
+      beagleindex:x:104:106:User for Beagle indexing:/var/cache/beagle:/bin/bash
+      duplicate:x:1:1:bin:/bin:/bin/bash
+      # Daemon has the default shell
+      daemon:x:2:2:Daemon:/sbin:
+
+   Results in a systematically indexed map of the file:
+
+      array_name[0][0]       at spaced
+      array_name[0][1]       x
+      array_name[0][2]       25
+      array_name[0][3]       25
+      array_name[0][4]       Batch jobs daemon
+      array_name[0][5]       /var/spool/atjobs
+      array_name[0][6]       /bin/bash
+      array_name[1][0]       duplicate
+      array_name[1][1]       x
+      array_name[1][2]       103
+      array_name[1][3]       105
+      array_name[1][4]       User for Avahi
+      array_name[1][5]       /var/run/avahi-daemon
+      array_name[1][6]       /bin/false
+      ...
+
+   -^
+*readtcp*
+
+   Prototype: readtcp(hostnameip, port, sendstring, maxbytes)
+
+   Return type: string
+
+   Description: Connects to tcp port of hostnameip, sends sendstring, reads
+   at most maxbytes from the response and returns those.
+
+   If the send string is empty, no data are sent or received from the socket.
+   Then the function only tests whether the TCP port is alive and returns an
+   empty string.
+
+   Not all Unix TCP read operations respond to signals for interruption, so
+   poorly formed requests can block the cf-agent process. Always test TCP
+   connections fully before deploying.
+
+   Arguments:
+
+     * host : Host name or IP address of server socket, in the range .*
+     * port : Port number to connect to, in the range 0,99999999999
+     * sendstring : Protocol query string, in the range .*
+     * maxbytes : Maximum number of bytes to read in response, in the range
+       0,99999999999
+
+   Example:
+
+     bundle agent example
+     {    
+     vars:
+
+       "my80" string => readtcp("research.iu.hio.no","80","GET /index.php HTTP/1.1$(const.r)$(const.n)Host: research.iu.hio.no$(const.r)$(const.n)$(const.r)$(const.n)",20);
+
+     classes:
+
+       "server_ok" expression => regcmp("[^\n]*200 OK.*\n.*","$(my80)");
+
+     reports:
+
+       server_ok::
+
+         "Server is alive";
+
+       !server_ok::
+
+         "Server is not responding - got $(my80)";
+     }
+
+   Notes: Note that on some systems the timeout mechanism does not seem to
+   successfully interrupt the waiting system calls so this might hang if you
+   send an incorrect query string. This should not happen, but the cause has
+   yet to be diagnosed.
+
+   -^
+*regarray*
+
+   Prototype: regarray(array, regex)
+
+   Return type: class
+
+   Description: Returns whether array contains elements matching the regular
+   expression regex.
+
+     * array : array identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+     * regex : Regular expression, in the range .*
+
+   A regular expression to match the content. The regular expression is
+   anchored, meaning it must match the complete array element.
+
+   Example:
+
+     bundle agent example
+     {
+     vars:
+
+       "myarray[0]" string => "bla1";
+       "myarray[1]" string => "bla2";
+       "myarray[3]" string => "bla";
+
+     classes:
+
+       "ok" expression => regarray("myarray","b.*2");
+
+     reports:
+
+      ok::
+
+         "Found in list";
+
+      !ok::
+
+         "Not found in list";
+
+     }
+
+   -^
+*regcmp*
+
+   Prototype: regcmp(regex, string)
+
+   Return type: class
+
+   Description: Returns whether the regular expression regex matches the
+   string.
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+     * string : Match string, in the range .*
+
+   The regular expression is anchored, meaning it must match the complete
+   content.
+
+   Example:
+
+     bundle agent subtest(user)
+     {
+     classes:
+
+       "invalid" not => regcmp("[a-z]{4}","$(user)");
+
+     reports:
+
+      !invalid::
+
+       "User name $(user) is valid at exactly 4 letters";
+
+      invalid::
+
+       "User name $(user) is invalid";
+     }
+
+   If the string contains multiple lines, then it is necessary to code these
+   explicitly, as regular expressions do not normally match the end of line
+   as a regular character (they only match end of string). You can do this
+   using either standard regular expression syntax or using the additional
+   features of PCRE (where (?ms) changes the way that ., ^ and $ behave),
+   e.g.
+
+      bundle agent example
+      {
+      vars:
+
+        "x" string = "
+            NAME: apache2 - Apache 2.2 web server
+            CATEGORY: application
+            ARCH: all
+            VERSION: 2.2.3,REV=2006.09.01
+            BASEDIR: /
+            VENDOR: http://httpd.apache.org/ packaged for CSW by Cory Omand
+            PSTAMP: comand@thor-20060901022929
+            INSTDATE: Dec 14 2006 16:05
+            HOTLINE: http://www.blastwave.org/bugtrack/
+            EMAIL: comand@blastwave.org
+            STATUS: completely installed
+          ";
+
+      classes:
+
+        "pkg_installed" expression = regcmp("(.*\n)*STATUS:\s+completely installed\n(.*\n)*",$(x));
+
+        "base_is_root" expression = regcmp("(?ms).*^BASEDIR:\s+/$.*", $(x));
+
+      reports:
+
+        pkg_installed::
+
+          "installed";
+
+        base_is_root::
+
+          "in root";
+      }
+
+   -^
+*regextract*
+
+   Prototype: regextract(regex, string, backref)
+
+   Return type: class
+
+   Description: Returns whether regex matches the string, and fills the array
+   backref with back-references.
+
+   If there are any back reference matches from the regular expression, then
+   the array will be populated with the values, in the manner:
+
+     $(identifier[0]) = entire string
+     $(identifier[1]) = back reference 1, etc
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+
+   A regular expression containing one or more parenthesized back references.
+   The regular expression is anchored, meaning it must match the entire
+   string
+
+     * string : Match string, in the range .*
+     * backref : Identifier for back-references, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     bundle agent example
+     {
+     classes:
+
+         # Extract regex backreferences and put them in an array
+
+         "ok" expression => regextract(
+                                      "xx ([^\s]+) ([^\s]+).* xx",
+                                      "xx one two three four xx",
+                                      "myarray"
+                                      );
+     reports:
+
+      ok::
+
+        "ok - \"$(myarray[0])\" = xx + \"$(myarray[1])\" + \"$(myarray[2])\" + .. + xx";
+     }
+
+   History: This function was introduced in CFEngine version 3.0.4 (2010)
+
+   -^
+*registryvalue*
+
+   Prototype: registryvalue(key, valueid)
+
+   Return type: string
+
+   Description: Returns the value of valueid in the Windows registry key key.
+
+   This function applies only to Windows-based systems. The value is parsed
+   as a string.
+
+   Arguments:
+
+     * key : Windows registry key, in the range .*
+     * value-id : Windows registry value-id, in the range .*
+
+   Example:
+
+     bundle agent reg
+     {
+     vars:
+       windows::
+         "value" string => registryvalue("HKEY_LOCAL_MACHINE\SOFTWARE\CFEngine AS\CFEngine","value3");
+
+     reports:
+        "Value extracted: $(value)";
+
+     }
+
+   Notes: Currently values of type REG_SZ (string), REG_EXPAND_SZ (expandable
+   string) and REG_DWORD (double word) are supported.
+
+   -^
+*regldap*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: regldap(uri, dn, filter, record, scope, regex, security)
+
+   Return type: class
+
+   Description: Returns whether the regular expression regex matches a value
+   item in the LDAP search.
+
+   This function retrieves a single field from all matching LDAP records
+   identified by the search parameters and compares it to the regular
+   expression regex.
+
+   Arguments:
+
+     * uri : URI, in the range .*
+
+   String value of the ldap server. e.g. "ldap://ldap.cfengine.com.no"
+
+     * dn : Distinguished name, in the range .*
+
+   Distinguished name, an ldap formatted name built from components, e.g.
+   "dc=cfengine,dc=com".
+
+     * filter : Filter, in the range .*
+
+   String filter criterion, in ldap search, e.g. "(sn=User)".
+
+     * record : Record name, in the range .*
+
+   String value with the name of the single record to be retrieved, e.g. uid.
+
+     * scope : Search scope policy, one of
+
+          * subtree
+          * onelevel
+          * base
+     * arg6 : Regex to match results, in the range .*
+
+     * security : Security level, one of
+
+          * none
+          * ssl
+          * sasl
+
+   Menu option indicating the encryption and authentication settings for
+   communication with the LDAP server. These features might be subject to
+   machine and server capabilities.
+
+   Example:
+
+ classes:
+
+    "found" expression => regldap(
+                                 "ldap://ldap.example.org",
+                                 "dc=cfengine,dc=com",
+                                 "(sn=User)",
+                                 "uid",
+                                 "subtree",
+                                 "jon.*",
+                                 "none"
+                                 );
+
+   -^
+*regline*
+
+   Prototype: regline(regex, filename)
+
+   Return type: class
+
+   Description: Returns whether the regular expression regex matches a line
+   in file filename.
+
+   Note that regex must match an entire line of the file in order to give a
+   true result.
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+     * filename : Filename to search, in the range .*
+
+   Example:
+
+     bundle agent example
+     {
+     files:
+
+       "/tmp/testfile" edit_line => test;
+     }
+
+     bundle edit_line test
+     {
+     classes:
+
+         "ok" expression => regline(".*XYZ.*","$(edit.filename)");
+
+     reports:
+
+      ok::
+
+        "File $(edit.filename) has a line with \"XYZ\" in it";
+
+     }
+
+   This function is useful for edit_line applications, where one might want
+   to set a class for detecting the presence of a string that does not
+   exactly match one being inserted. For example:
+
+     bundle edit_line upgrade_cfexecd
+       {
+       classes:
+
+         # Check there is not already a crontab line, not identical to
+         # the one proposed below...
+
+         "exec_fix" not => regline(".*cf-execd.*","$(edit.filename)");
+
+       insert_lines:
+
+         exec_fix::
+
+          "0,5,10,15,20,25,30,35,40,45,50,55 * * * * /var/cfengine/bin/cf-execd -F";
+
+       reports:
+
+         exec_fix::
+
+          "Added a 5 minute schedule to crontabs";
+       }
+
+   -^
+*reglist*
+
+   Prototype: reglist(list, regex)
+
+   Return type: class
+
+   Description: Returns whether the regular expression regex matches any item
+   in list.
+
+   Arguments:
+
+     * list : list identifier, in the range @[(][a-zA-Z0-9]+[)]
+     * regex : Regular expression, in the range .*
+
+   The regular expression is anchored, meaning it must match the entire
+   string.
+
+   Example:
+
+     vars:
+
+      "nameservers" slist => {
+                             "128.39.89.10",
+                             "128.39.74.16",
+                             "192.168.1.103"
+                             };
+     classes:
+
+       "am_name_server" expression => reglist("@(nameservers)",escape("$(sys.ipv4[eth0])"));
+
+   In the example above, the IP address in $(sys.ipv4[eth0]) must be escaped,
+   so that the (.) characters in the IP address are not interpreted as the
+   regular expression "match any" characters.
+
+   -^
+*remoteclassesmatching*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: remoteclassesmatching(regex, server, encrypt, prefix)
+
+   Return type: class
+
+   Description: Read persistent classes matching regular expression regex
+   from a remote CFEngine server server and add them into local context with
+   prefix.
+
+   The return value is true (sets the class) if communication with the server
+   was successful and classes were populated in the current bundle.
+
+   This function contacts a remote cf-serverd and requests access to defined
+   persistent classes on that system. Access must be granted by making an
+   access promise with resource_type set to context.
+
+   Arguments:
+
+     * regex : Regular expression, in the range .*
+
+   This should match a list of persistent classes of be returned from the
+   server, if the server has granted access to them.
+
+     * server : Server name or address, in the range .*
+
+   The name or IP address of the remote server.
+
+     * encrypt : Boolean
+
+   Use encryption.
+
+     * prefix : Return class prefix, in the range [a-zA-Z0-9_$(){}\[\].:]+
+
+   A string to be added to the returned classes. If the server defines a
+   persistent class alpha, then this would generate a private class in the
+   current bundle called prefix_alpha.
+
+   Example:
+
+    "succeeded" expression => remoteclassesmatching("regex","server","yes","myprefix");
+
+   Notes: Note that this function assumes that you have already performed a
+   successful key exchange between systems, (e.g. using either a remote copy
+   or cf-runagent connection). It contains no mechanism for trust
+   establishment and will fail if there is no trust relationship
+   pre-established.
+
+   -^
+*remotescalar*
+
+   This function is only available in CFEngine Enterprise.
+
+   Prototype: remotescalar(id, server, encrypt)
+
+   Return type: string
+
+   Description: Returns a scalar value from a remote CFEngine server.
+
+   This function asks for an identifier. It is up to the server to interpret
+   what this means and to return a value of its choosing. If the identifier
+   matches a persistent scalar variable then this will be returned
+   preferentially. If no such variable is found, then the server will look
+   for a literal string in a server bundle with a handle that matches the
+   requested object.
+
+   The remote system's cf-serverd must accept the query for the requested
+   variable from the host that is requesting it. Access must be granted by
+   making an access promise with resource_type set to literal.
+
+   CFEngine caches the value of this variable, so that, if the network is
+   unavailable, the last known value will be used. Hence use of this function
+   is fault tolerant. Care should be taken in attempting to access remote
+   variables that are not available, as the repeated connections needed to
+   resolve the absence of a value can lead to undesirable behavior. As a
+   general rule, users are recommended to refrain from relying on the
+   availability of network resources.
+
+   Arguments:
+
+     * id : resource identifier, in the range [a-zA-Z0-9_$(){}\[\].:]+
+     * server : Hostname or IP address of server, in the range .*
+     * encrypt : Boolean
+
+   Use enryption.
+
+   Example:
+
+     vars:
+
+      "remote" string => remotescalar("test_scalar","127.0.0.1","yes");
+
+     bundle server access
+     {
+     access:
+       "value of my test_scalar, can expand variables here - $(sys.host)"
+         handle => "test_scalar",
+         comment => "Grant access to contents of test_scalar VAR",
+         resource_type => "literal",
+         admit => { "127.0.0.1" };
+     }
+
+   Notes: Note that this function assumes that you have already performed a
+   successful key exchange between systems, (e.g. using either a remote copy
+   or cf-runagent connection). It contains no mechanism for trust
+   establishment and will fail if there is no trust relationship established
+   in advance.
+
+   -^
+*returnszero*
+
+   Prototype: returnszero(command, shell)
+
+   Return type: class
+
+   Description: Runs command and returns whether it has returned with exit
+   status zero.
+
+   This is the complement of execresult(), but it returns a class result
+   rather than the output of the command.
+
+   Arguments:
+
+     * command : Fully qualified command path, in the range "?(/.*)
+     * shelll : Shell encapsulation option, in the range useshell,noshell
+
+   Example:
+
+ bundle agent example
+ {    
+ classes:
+
+   "my_result" expression => returnszero("/usr/local/bin/mycommand","noshell");
+
+ reports:
+
+   !my_result::
+
+     "Command failed";
+
+ }
+
+   -^
+*rrange*
+
+   Prototype: rrange(arg1, arg2)
+
+   Return type: rrange [real,real]`
+
+   Description: Define a range of real numbers for CFEngine internal use.
+
+   Arguments:
+
+     * arg1 : Real number, in the range -9.99999E100,9.99999E100
+     * arg2 : Real number, in the range -9.99999E100,9.99999E100
+
+   Notes: This is not yet used.
+
+   -^
+*selectservers*
+
+   Prototype: selectservers(hostlist, port, query, regex,maxbytes, array)
+
+   Return type: int
+
+   Description: Returns the number of tcp servers from hostlist which respond
+   correctly to a query send to port, and populates array with their names.
+
+   This function allows discovery of all the TCP ports that are active and
+   functioning from an ordered list, and builds an array of their names. This
+   allows maintaining a list of pretested failover alternatives.
+
+   Arguments:
+
+     * hostlist : The identifier of a cfengine list of hosts or addresses to
+       contact, in the range @[(][a-zA-Z0-9]+[)]
+     * port : The port number, in the range 0,99999999999
+     * query : An optional query string, in the range .*
+     * regex : A regular expression to match success, in the range .*
+
+   If a query string is sent, this regular expression is anchored, meaning it
+   must match the entire resulting reply. If query is empty, then no
+   reply-checking is performed (and any server reply is deemed to be
+   satisfactory).
+
+     * maxbytes : Maximum number of bytes to read from server, in the range
+       0,99999999999
+     * array : Name for array of results, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     bundle agent example
+     {    
+     vars:
+
+      "hosts" slist => { "slogans.iu.hio.no", "eternity.iu.hio.no", "nexus.iu.hio.no" };
+      "fhosts" slist => { "www.cfengine.com", "www.cfengine.org" };
+
+      "up_servers" int =>  selectservers("@(hosts)","80","","","100","alive_servers");
+      "has_favicon" int =>
+*selectservers*(
+                 "@(hosts)", "80",
+             "GET /favicon.ico HTTP/1.0$(const.n)Host: www.cfengine.com$(const.n)$(const.n)",
+             "(?s).*OK.*",
+             "200", "favicon_servers");
+
+     classes:
+
+       "someone_alive" expression => isgreaterthan("$(up_servers)","0");
+
+       "has_favicon" expression => isgreaterthan("$(has_favicon)","0");
+
+     reports:
+         "Number of active servers $(up_servers)";
+
+       someone_alive::
+         "First server $(alive_servers[0]) fails over to $(alive_servers[1])";
+
+       has_favicon::
+         "At least $(favicon_servers[0]) has a favicon.ico";
+
+     }
+
+   If there is a multi-line response from the server, special care must be
+   taken to ensure that newlines are matched, too. Note the use of (?s) in
+   the example, which allows . to also match newlines in the multi-line HTTP
+   response.
+
+   -^
+*shuffle*
+
+   Prototype: shuffle(list, seed)
+
+   Return type: slist
+
+   Description: Return list shuffled with seed.
+
+   The same seed will produce the same shuffle every time. For a random
+   shuffle, provide a random seed with the randomint function.
+
+   Arguments:
+
+     * list : The name of the list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * seed : Shuffle seed in the range .*
+
+   Example:
+
+     bundle agent test
+     {
+       vars:
+           "a" slist => { "b", "c", "a" };
+           "shuffles" slist => { "xx", "yy", "zz" };
+
+           "sa_$(shuffles)" slist => shuffle("a", $(shuffles));
+
+           "j_$(shuffles)" string => join(",", "sa_$(shuffles)");
+
+       reports:
+           "shuffled by $(shuffles) = '$(j_$(shuffles))'";
+     }
+
+   Output:
+
+     shuffled by xx = 'b,a,c'
+     shuffled by yy = 'a,c,b'
+     shuffled by zz = 'c,b,a'
+
+   See also: sort().
+
+   -^
+*some*
+
+   Prototype: some(regex, list)
+
+   Return type: class
+
+   Description: Return whether any element of the list matches the regular
+   expression.
+
+   Arguments:
+
+     * regex : Unanchored regular expression to find, in the range .*
+     * list : The name of the list variable to check, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+     bundle agent test
+     {
+       classes:
+           "some1" expression => some("long string", "test");
+           "some2" expression => some("none", "test");
+
+       vars:
+           "test" slist => {
+                             1,2,3,
+                             "one", "two", "three",
+                             "long string",
+                             "four", "fix", "six",
+                             "one", "two", "three",
+                           };
+
+       reports:
+           "The test list is $(test)";
+         some1::
+           "some() test 1 passed";
+         !some1::
+           "some() test 1 failed";
+         some2::
+           "some() test 2 failed";
+         !some2::
+           "some() test 2 passed";
+     }
+
+   See also: filter(), every(), and none().
+
+   -^
+*sort*
+
+   Prototype: sort(list, mode)
+
+   Return type: slist
+
+   Description: Returns list sorted according to mode.
+
+   Only lexicographical sorting is supported currently.
+
+   Arguments:
+
+     * list : The name of the list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * mode : Sorting mode, in the range lex
+
+   Example:
+
+     bundle agent test
+     {
+       vars:
+           "a" slist => { "b", "c", "a" };
+           "b" slist => { "100", "9", "10" };
+           "c" slist => { };
+           "d" slist => { "", "a", "", "b" };
+           "e" slist => { "a", "1", "b" };
+
+           "ja" string => join(",", "sa");
+           "jb" string => join(",", "sb");
+           "jc" string => join(",", "sc");
+           "jd" string => join(",", "sd");
+           "je" string => join(",", "se");
+
+           "sa" slist => sort("a", "lex");
+           "sb" slist => sort("b", "lex");
+           "sc" slist => sort("c", "lex");
+           "sd" slist => sort("d", "lex");
+           "se" slist => sort("e", "lex");
+
+           "jsa" string => join(",", "sa");
+           "jsb" string => join(",", "sb");
+           "jsc" string => join(",", "sc");
+           "jsd" string => join(",", "sd");
+           "jse" string => join(",", "se");
+
+       reports:
+           "sorted '$(ja)' = '$(jsa)'";
+           "sorted '$(jb)' = '$(jsb)'";
+           "sorted '$(jc)' = '$(jsc)'";
+           "sorted '$(jd)' = '$(jsd)'";
+           "sorted '$(je)' = '$(jse)'";
+     }
+
+   Output:
+
+     sorted 'a,b,c' = 'a,b,c'
+     sorted '10,100,9' = '10,100,9'
+     sorted '' = ''
+     sorted ',,a,b' = ',,a,b'
+     sorted '1,a,b' = '1,a,b'
+
+   See also: shuffle().
+
+   -^
+*splayclass*
+
+   Prototype: splayclass(input, policy)
+
+   Return type: class
+
+   Description: Returns whether input's time-slot has arrived, according to a
+   policy.
+
+   The function returns true if the system clock lies within a scheduled
+   time-interval that maps to a hash of input (which may be any arbitrary
+   string). Different strings will hash to different time intervals, and thus
+   one can map different tasks to time-intervals.
+
+   This function may be used to distribute a task, typically on multiple
+   hosts, in time over a day or an hourly period, depending on the policy
+   (that must be either daily or hourly). This is useful for copying
+   resources to multiple hosts from a single server, (e.g. large software
+   updates), when simultaneous scheduling would lead to a bottleneck and/or
+   server overload.
+
+   The function is similar to the splaytime feature in cf-execd, except that
+   it allows you to base the decision on any string-criterion on a given
+   host.
+
+   Arguments:
+
+     * input : Input string for classification, in the range .*
+
+   The variation in input determines how effectively CFEngine will be able to
+   distribute tasks. CFEngine instances with the same input will yield a true
+   result at the same time, and different input will yield a true result at
+   different times. Thus tasks could be scheduled according to group names
+   for predictability, or according to IP addresses for distribution across
+   the policy interval.
+
+     * policy : Splay time policy, in the range daily, hourly
+
+   The times at which the splayclass will be defined depends on the policy.
+   If it is hourly then the class will be defined for a 5-minute interval
+   every hour. If the policy daily, then the class will be defined for one
+   5-minute interval every day. This means that splayclass assumes that you
+   are running CFEngine with the default schedule of "every 5 minutes". If
+   you change the executor schedule control variable, you may prevent the
+   splayclass from ever being defined (that is, if the hashed 5-minute
+   interval that is selected by the splayclass is a time when you have told
+   CFEngine not to run).
+
+   Example:
+
+     bundle agent example
+     {    
+     classes:
+
+       "my_turn" expression => splayclass("$(sys.host)$(sys.ipv4)","daily");
+
+     reports:
+
+       my_turn::
+
+         "Load balanced class activated";
+     }
+
+   -^
+*splitstring*
+
+   Prototype: splitstring(string, regex, maxent)
+
+   Return type: slist
+
+   Description: Splits string into at most maxent substrings wherever regex
+   occurs, and returns the list with those strings.
+
+   If the maximum number of substrings is insufficient to accommodate all
+   entries,then the final entry in the slist that is generated will contain
+   the rest of the un-split string.
+
+   Arguments:
+
+     * string : A data string, in the range .*
+     * regex : Unanchored regular expression to split on, in the range .*
+     * maxent : Maximum number of substrings, in the range 0,99999999999
+
+   Example:
+
+ bundle agent test
+ {
+ vars:
+
+   "split1" slist => splitstring("one:two:three",":","10");
+   "split2" slist => splitstring("one:two:three",":","1");
+   "split3" slist => splitstring("alpha:xyz:beta","xyz","10");
+
+ reports:
+
+   "split1: $(split1)";  # will list "one", "two", and "three"
+   "split2: $(split2)";  # will list "one" and "two:three"
+   "split3: $(split3)";  # will list "alpha:" and ":beta"
+
+ }
+
+   -^
+*strcmp*
+
+   Prototype: strcmp(string1, string2)
+
+   Return type: class
+
+   Description: Returns whether the two strings string1 and string2 match
+   exactly.
+
+   Arguments:
+
+     * string1 : The first string, in the range .*
+     * string2 : The second string, in the range .*
+
+   Example:
+
+ bundle agent example
+ {    
+ classes:
+
+   "same" expression => strcmp("test","test");
+
+ reports:
+
+   same::
+
+     "Strings are equal";
+
+  !same::
+
+     "Strings are not equal";
+ }
+
+   -^
+*strftime*
+
+   Prototype: strftime(mode, template, time)
+
+   Return type: string
+
+   Description: Interprets a time and date format string at a particular
+   point in GMT or local time using Unix epoch time.
+
+   Arguments:
+
+     * mode : Mode, in the range gmtime, localtime
+
+   The mode is either gmtime (to get GMT times and dates) or localtime (to
+   get times and dates according to the local timezone, usually specified by
+   the TZ environment variable).
+
+     * template : Format string, in the range .*
+
+   The conversion specifications that can appear in the format template are
+   specialized for printing components of the date and time according to the
+   system locale.
+
+     * time : Unix epoch time in the range \d+
+
+   Example:
+
+     bundle agent example
+     {    
+       vars:
+           "time" int => now();
+           "now" string => strftime("localtime", "%F %T", now());
+           "then" string => strftime("localtime", "%F %T", 0);
+
+           "gmt_now" string => strftime("gmtime", "%F %T", now());
+           "gmt_then" string => strftime("gmtime", "%F %T", 0);
+
+       reports:
+           "time $(time); now $(now); then $(then)";
+           "time $(time); GMT now $(now); GMT then $(then)";
+     }
+
+   Notes: Note that strftime is a standard C function and you should consult
+   its reference to be sure of the specifiers it allows. The below is from
+   the documentation of the standard strftime implementation in the glibc
+   manual at
+   http://www.gnu.org/software/libc/manual/html_node/Formatting-Calendar-Time.html#Formatting-Calendar-Time
+
+   Ordinary characters appearing in the template are copied to the output.
+   Conversion specifiers are introduced by a % character and end with a
+   format specifier taken from the following list. The whole % sequence is
+   replaced in the output string as follows:
+
+     * %a
+
+   The abbreviated weekday name according to the current locale.
+
+     * %A
+
+   The full weekday name according to the current locale.
+
+     * %b
+
+   The abbreviated month name according to the current locale.
+
+     * %B
+
+   The full month name according to the current locale.
+
+   Using %B together with %d produces grammatically incorrect results for
+   some locales.
+
+     * %c
+
+   The preferred calendar time representation for the current locale.
+
+     * %C
+
+   The century of the year. This is equivalent to the greatest integer not
+   greater than the year divided by 100.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %d
+
+   The day of the month as a decimal number (range 01 through 31).
+
+     * %D
+
+   The date using the format %m/%d/%y.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %e
+
+   The day of the month like with %d, but padded with blank (range 1 through
+   31).
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %F
+
+   The date using the format %Y-%m-%d. This is the form specified in the ISO
+   8601 standard and is the preferred form for all uses.
+
+   This format was first standardized by ISO C99 and by POSIX.1-2001.
+
+     * %g
+
+   The year corresponding to the ISO week number, but without the century
+   (range 00 through 99). This has the same format and value as %y, except
+   that if the ISO week number (see %V) belongs to the previous or next year,
+   that year is used instead.
+
+   This format was first standardized by ISO C99 and by POSIX.1-2001.
+
+     * %G
+
+   The year corresponding to the ISO week number. This has the same format
+   and value as %Y, except that if the ISO week number (see %V) belongs to
+   the previous or next year, that year is used instead.
+
+   This format was first standardized by ISO C99 and by POSIX.1-2001 but was
+   previously available as a GNU extension.
+
+     * %h
+
+   The abbreviated month name according to the current locale. The action is
+   the same as for %b.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %H
+
+   The hour as a decimal number, using a 24-hour clock (range 00 through 23).
+
+     * %I
+
+   The hour as a decimal number, using a 12-hour clock (range 01 through 12).
+
+     * %j
+
+   The day of the year as a decimal number (range 001 through 366).
+
+     * %k
+
+   The hour as a decimal number, using a 24-hour clock like %H, but padded
+   with blank (range 0 through 23).
+
+   This format is a GNU extension.
+
+     * %l
+
+   The hour as a decimal number, using a 12-hour clock like %I, but padded
+   with blank (range 1 through 12).
+
+   This format is a GNU extension.
+
+     * %m
+
+   The month as a decimal number (range 01 through 12).
+
+     * %M
+
+   The minute as a decimal number (range 00 through 59).
+
+     * %n
+
+   A single \n (newline) character.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %p
+
+   Either AM or PM, according to the given time value; or the corresponding
+   strings for the current locale. Noon is treated as PM and midnight as AM.
+   In most locales AM/PM format is not supported, in such cases %p yields an
+   empty string.
+
+     * %P
+
+   Either am or pm, according to the given time value; or the corresponding
+   strings for the current locale, printed in lowercase characters. Noon is
+   treated as pm and midnight as am. In most locales AM/PM format is not
+   supported, in such cases %P yields an empty string.
+
+   This format is a GNU extension.
+
+     * %r
+
+   The complete calendar time using the AM/PM format of the current locale.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99. In the
+   POSIX locale, this format is equivalent to %I:%M:%S %p.
+
+     * %R
+
+   The hour and minute in decimal numbers using the format %H:%M.
+
+   This format was first standardized by ISO C99 and by POSIX.1-2001 but was
+   previously available as a GNU extension.
+
+     * %s
+
+   The number of seconds since the epoch, i.e., since 1970-01-01 00:00:00
+   UTC. Leap seconds are not counted unless leap second support is available.
+
+   This format is a GNU extension.
+
+     * %S
+
+   The seconds as a decimal number (range 00 through 60).
+
+     * %t
+
+   A single \t (tabulator) character.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %T
+
+   The time of day using decimal numbers using the format %H:%M:%S.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %u
+
+   The day of the week as a decimal number (range 1 through 7), Monday being
+   1.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %U
+
+   The week number of the current year as a decimal number (range 00 through
+   53), starting with the first Sunday as the first day of the first week.
+   Days preceding the first Sunday in the year are considered to be in week
+   00.
+
+     * %V
+
+   The ISO 8601:1988 week number as a decimal number (range 01 through 53).
+   ISO weeks start with Monday and end with Sunday. Week 01 of a year is the
+   first week which has the majority of its days in that year; this is
+   equivalent to the week containing the year's first Thursday, and it is
+   also equivalent to the week containing January 4. Week 01 of a year can
+   contain days from the previous year. The week before week 01 of a year is
+   the last week (52 or 53) of the previous year even if it contains days
+   from the new year.
+
+   This format was first standardized by POSIX.2-1992 and by ISO C99.
+
+     * %w
+
+   The day of the week as a decimal number (range 0 through 6), Sunday being
+   0.
+
+     * %W
+
+   The week number of the current year as a decimal number (range 00 through
+   53), starting with the first Monday as the first day of the first week.
+   All days preceding the first Monday in the year are considered to be in
+   week 00.
+
+     * %x
+
+   The preferred date representation for the current locale.
+
+     * %X
+
+   The preferred time of day representation for the current locale.
+
+     * %y
+
+   The year without a century as a decimal number (range 00 through 99). This
+   is equivalent to the year modulo 100.
+
+     * %Y
+
+   The year as a decimal number, using the Gregorian calendar. Years before
+   the year 1 are numbered 0, -1, and so on.
+
+     * %z
+
+   RFC 822/*ISO 8601:1988* style numeric time zone (e.g., -0600 or +0100), or
+   nothing if no time zone is determinable.
+
+   This format was first standardized by ISO C99 and by POSIX.1-2001 but was
+   previously available as a GNU extension.
+
+   In the POSIX locale, a full RFC 822 timestamp is generated by the format
+   %a, %d %b %Y %H:%M:%S %z (or the equivalent %a, %d %b %Y %T %z).
+
+     * %Z
+
+   The time zone abbreviation (empty if the time zone can't be determined).
+
+     * %%
+
+   A literal % character.
+
+   According to POSIX.1 every call to strftime checks the contents of the
+   environment variable TZ before any output is produced.
+
+   -^
+*sublist*
+
+   Prototype: sublist(list, head_or_tail, max_elements)
+
+   Return type: slist
+
+   Description: Returns list of up to max_elements of list, obtained from
+   head or tail depending on head_or_tail.
+
+   Arguments:
+
+     * list : The name of the list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+     * head_or_tail : Whether to extract elements from the beginning or from
+       the end. in the range head, tail
+     * max_elements : Maximum number of elements to return in the range
+       0,999999999
+
+   Example:
+
+     bundle agent test
+     {
+       vars:
+           "test" slist => {
+                             1,2,3,
+                             "one", "two", "three",
+                             "long string",
+                             "four", "fix", "six",
+                           };
+
+           "test_head9999" slist => sublist("test", "head", 9999);
+           "test_head1" slist => sublist("test", "head", 1);
+           "test_head0" slist => sublist("test", "head", 0);
+
+           "test_tail9999" slist => sublist("test", "tail", 9999);
+           "test_tail10" slist => sublist("test", "tail", 10);
+           "test_tail2" slist => sublist("test", "tail", 2);
+           "test_tail1" slist => sublist("test", "tail", 1);
+           "test_tail0" slist => sublist("test", "tail", 0);
+
+       reports:
+           "The test list is $(test)";
+           "This line should not appear: $(test_head0)";
+           "The head(1) of the test list is $(test_head1)";
+           "The head(9999) of the test list is $(test_head9999)";
+           "This line should not appear: $(test_tail0)";
+           "The tail(1) of the test list is $(test_tail1)";
+           "The tail(10) of the test list is $(test_tail10)";
+           "The tail(2) of the test list is $(test_tail2)";
+           "The tail(9999) of the test list is $(test_tail9999)";
+     }
+
+   Notes:
+
+   -^
+*sum*
+
+   Prototype: sum(list)
+
+   Return type: real
+
+   Description: Return the sum of the reals in list.
+
+   This function might be used for simple ring computation. Of course, you
+   could easily combine sum with readstringarray or readreallist etc., to
+   collect summary information from a source external to CFEngine.
+
+   Arguments:
+
+     * list : A list of arbitrary real values, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent test
+ {
+   vars:
+       "adds_to_six" ilist => { "1", "2", "3" };
+       "six" real => sum("adds_to_six");
+       "adds_to_zero" rlist => { "1.0", "2", "-3e0" };
+       "zero" real => sum("adds_to_zero");
+
+   reports:
+       "six is $(six), zero is $(zero)";
+ }
+
+   Because $(six) and $(zero) are both real numbers, the report that is
+   generated will be:
+
+ six is 6.000000, zero is 0.000000
+
+   Notes:
+
+   History: Was introduced in version 3.1.0b1,Nova 2.0.0b1 (2010)
+
+   -^
+*translatepath*
+
+   Prototype: translatepath(path)
+
+   Return type: string
+
+   Description: Translate path separators from Unix style to the host's
+   native style and returns the result.
+
+   Takes a string argument with slashes as path separators and translate
+   these to the native format for path separators on the host. For example
+   translatepath("a/b/c") would yield "a/b/c" on Unix platforms, but "a\b\c"
+   on Windows.
+
+   Arguments:
+
+     * path : Unix style path, in the range "?(/.*)
+
+   Example:
+
+ bundle agent test
+ {
+   vars:
+       "inputs_dir" string => translatepath("$(sys.workdir)/inputs");
+
+   reports:
+
+     windows::
+       "The path has backslashes: $(inputs_dir)";
+
+     !windows::
+       "The path has slashes: $(inputs_dir)";
+ }
+
+   Notes: Be careful when using this function in combination with regular
+   expressions, since backslash is also used as escape character in regex's.
+   For example, in the regex dir/.abc, the dot represents the regular
+   expression "any character", while in the regex dir\.abc, the backslash-dot
+   represents a literal dot character.
+
+   -^
+*unique*
+
+   Prototype: unique(list)
+
+   Return type: slist
+
+   Description: Returns list of unique elements from list.
+
+   Arguments:
+
+     * list : The name of the list variable, in the range
+       [a-zA-Z0-9_$(){}\[\].:]+
+
+   Example:
+
+ bundle agent test
+ {
+   vars:
+       "test" slist => {
+                         1,2,3,
+                         "one", "two", "three",
+                         "long string",
+                         "four", "fix", "six",
+                         "one", "two", "three",
+                       };
+
+       "test_str" string => join(",", "test");
+       "test_unique" slist => unique("test");
+       "unique_str" string => join(",", "test_unique");
+
+   reports:
+       "The test list is $(test_str)";
+       "The unique elements of the test list: $(unique_str)";
+ }
+
+   -^
+*usemodule*
+
+   Prototype: usemodule(name, args)
+
+   Return type: class
+
+   Description: Execute CFEngine module script name with args and return
+   whether successful.
+
+   Arguments:
+
+     * name : Name of module command, in the range .*
+
+   The name of the module without its leading path, since it is assumed to be
+   in the registered modules directory, WORKDIR/modules.
+
+     * args : Argument string for the module, in the range .*
+
+   Example:
+
+ bundle agent test
+ {
+   classes:
+
+       # returns $(user)
+
+       "done" expression => usemodule("getusers","");
+
+   commands:
+
+       "/bin/echo" args => "test $(user)";
+ }
+
+   -^
+*userexists*
+
+   Prototype: userexists(user)
+
+   Return type: class
+
+   Description: Return whether user name or numerical id exists on this host.
+
+   Checks whether the user is in the password database for the current host.
+   The argument must be a user name or user id.
+
+   Arguments:
+
+     * user : User name or identifier, in the range .*
+
+   Example:
+
+     bundle agent example
+     {    
+       classes:
+
+           "ok" expression => userexists("root");
+
+       reports:
+
+         ok::
+
+           "Root exists";
+
+         !ok::
+
+           "Root does not exist";
+     }
+
+   -^
