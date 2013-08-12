@@ -11,6 +11,8 @@ Contents of the help are dumped from:
  * https://cfengine.com/docs/3.5/reference-functions.html
 * cf3specialvars.txt
  * https://cfengine.com/docs/3.5/reference-special-variables.html
+* cf3promisetypes.txt
+ * https://cfengine.com/docs/3.5/reference-promise-types.html
 
 After placing the help files under your `~/.vim/doc/` you can call the functions through `:help`
 

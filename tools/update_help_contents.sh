@@ -9,6 +9,7 @@
 # tweak these to suite your needs
 cf3funcs="${HOME}/.vim/doc/cf3funcs.txt"
 cf3specialvars="${HOME}/.vim/doc/cf3specialvars.txt"
+cf3promisetypes="${HOME}/.vim/doc/cf3promisetypes.txt"
 # local path to the github.com:cfengine/documentation repo
 cf3docs="${HOME}/git/cfengine-documentation"
 
@@ -22,7 +23,7 @@ update_functions(){
   [[ -f "${cf3funcs}" ]] && rm -i ${cf3funcs}
 
   # This here vomit dumps the functions and tweaks the contents to work with vim.
-  for i in $(find ${cf3docs}/reference/functions/ -iname '*.markdown'); do
+  for i in $(find ${cf3docs}/reference/functions/ -maxdepth 1 -iname '*.markdown'); do
     file=${i##*/}
     x=${file%%.*}
     echo "Parsing function: ${x}()"
@@ -47,7 +48,7 @@ update_special_vars(){
   # get rid of old helpfile if we have it
   [[ -f "${cf3specialvars}" ]] && rm -i ${cf3specialvars}
 
-  for i in $(find ${cf3docs}/reference/special-variables/ -iname '*.markdown'); do
+  for i in $(find ${cf3docs}/reference/special-variables/ -maxdepth 1 -iname '*.markdown'); do
     file=${i##*/}
     x=${file%%.*}
     echo "Parsing special variable: \"${x}\""
@@ -59,8 +60,27 @@ update_special_vars(){
 
 }
 
+update_promise_types(){
+  # get rid of old helpfile if we have it
+  [[ -f "${cf3promisetypes}" ]] && rm -i ${cf3promisetypes}
+
+  for i in $(find ${cf3docs}/reference/promise-types/ -maxdepth 1 -iname '*.markdown'); do
+    file=${i##*/}
+    dir=${i%/*}
+    x=${file%%.*}
+    [[ -d ${dir}/${x} ]] && continue
+    echo "Parsing promise type: \"${x}\""
+    url_suffix=$(awk '/alias:/ { print $NF}' ${i} )
+    url="${url_prefix}/${url_suffix}"
+    links -dump ${url} |egrep "^\s+\b${x}$\b" -A9999|egrep -B9999 '\s+\-\^' | \
+      sed -r "s/^\s{30,}\b(${x})\b/\*cf3-\1\*/g" >> ${cf3promisetypes}
+  done 
+
+}
+
 update_functions
 update_special_vars
+update_promise_types
 
 
 
