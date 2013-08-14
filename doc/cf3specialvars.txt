@@ -1,1255 +1,1242 @@
-*cf3-mon*
+==============================================================================
+mon                                                                  *cf3-mon*
 
    The variables discovered by cf-monitord are placed in this monitoring
-   context. Monitoring variables are expected to be changing rapidly - values
-   are typically updated or added every 2.5 minutes.
+   context. Monitoring variables are expected to be changing rapidly -
+   values are typically updated or added every 2.5 minutes.
 
    In CFEngine Enterprise, custom defined monitoring targets also become
-   variables in this context, named by the handle of the promise that defined
-   them.
+   variables in this context, named by the handle of the promise that
+   defined them.
 
-  mon.listening_udp4_ports
+mon.listening_udp4_ports
 
-   Port numbers that were observed to be set up to receive connections on the
-   host concerned.
+   Port numbers that were observed to be set up to receive connections
+   on the host concerned.
 
-  mon.listening_tcp4_ports
+mon.listening_tcp4_ports
 
-   Port numbers that were observed to be set up to receive connections on the
-   host concerned.
+   Port numbers that were observed to be set up to receive connections
+   on the host concerned.
 
-  mon.listening_udp6_ports
+mon.listening_udp6_ports
 
-   Port numbers that were observed to be set up to receive connections on the
-   host concerned.
+   Port numbers that were observed to be set up to receive connections
+   on the host concerned.
 
-  mon.listening_tcp6_ports
+mon.listening_tcp6_ports
 
-   port numbers that were observed to be set up to receive connections on the
-   host concerned.
+   port numbers that were observed to be set up to receive connections
+   on the host concerned.
 
-  mon.value_users
+mon.value_users
 
    Users with active processes, including system users.
 
-  mon.av_users
+mon.av_users
 
    Observational measure collected every 2.5 minutes from cf-monitord.
    Description: Users with active processes, including system users.
 
-  mon.dev_users
+mon.dev_users
 
    Users with active processes, including system users.
 
-  mon.value_rootprocs
+mon.value_rootprocs
 
    Sum privileged system processes.
 
-  mon.av_rootprocs
+mon.av_rootprocs
 
    Sum privileged system processes.
 
-  mon.dev_rootprocs
+mon.dev_rootprocs
 
    Sum privileged system processes.
 
-  mon.value_otherprocs
+mon.value_otherprocs
 
    Sum non-privileged process.
 
-  mon.av_otherprocs
+mon.av_otherprocs
 
    Sum non-privileged process.
 
-  mon.dev_otherprocs
+mon.dev_otherprocs
 
    Sum non-privileged process.
 
-  mon.value_diskfree
+mon.value_diskfree
 
    Free disk on / partition.
 
-  mon.av_diskfree
+mon.av_diskfree
 
    Free disk on / partition.
 
-  mon.dev_diskfree
+mon.dev_diskfree
 
    Free disk on / partition.
 
-  mon.value_loadavg
+mon.value_loadavg
 
    Kernel load average utilization (sum over cores).
 
-  mon.av_loadavg
+mon.av_loadavg
 
    Kernel load average utilization (sum over cores).
 
-  mon.dev_loadavg
+mon.dev_loadavg
 
    Kernel load average utilization (sum over cores).
 
-  mon.value_netbiosns_in
+mon.value_netbiosns_in
 
    netbios name lookups (in).
 
-  mon.av_netbiosns_in
+mon.av_netbiosns_in
 
    netbios name lookups (in).
 
-  mon.dev_netbiosns_in
+mon.dev_netbiosns_in
 
    netbios name lookups (in).
 
-  mon.value_netbiosns_out
+mon.value_netbiosns_out
 
    netbios name lookups (out).
 
-  mon.av_netbiosns_out
+mon.av_netbiosns_out
 
    netbios name lookups (out).
 
-  mon.dev_netbiosns_out
+mon.dev_netbiosns_out
 
    netbios name lookups (out).
 
-  mon.value_netbiosdgm_in
+mon.value_netbiosdgm_in
 
    netbios name datagrams (in).
 
-  mon.av_netbiosdgm_in
+mon.av_netbiosdgm_in
 
    netbios name datagrams (in).
 
-  mon.dev_netbiosdgm_in
+mon.dev_netbiosdgm_in
 
    netbios name datagrams (in).
 
-  mon.value_netbiosdgm_out
+mon.value_netbiosdgm_out
 
    netbios name datagrams (out).
 
-  mon.av_netbiosdgm_out
+mon.av_netbiosdgm_out
 
    netbios name datagrams (out).
 
-  mon.dev_netbiosdgm_out
+mon.dev_netbiosdgm_out
 
    netbios name datagrams (out).
 
-  mon.value_netbiosssn_in
+mon.value_netbiosssn_in
 
    Samba/netbios name sessions (in).
 
-  mon.av_netbiosssn_in
+mon.av_netbiosssn_in
 
    Samba/netbios name sessions (in).
 
-  mon.dev_netbiosssn_in
+mon.dev_netbiosssn_in
 
    Samba/netbios name sessions (in).
 
-  mon.value_netbiosssn_out
+mon.value_netbiosssn_out
 
    Samba/netbios name sessions (out).
 
-  mon.av_netbiosssn_out
+mon.av_netbiosssn_out
 
    Samba/netbios name sessions (out).
 
-  mon.dev_netbiosssn_out
+mon.dev_netbiosssn_out
 
    Samba/netbios name sessions (out).
 
-  mon.value_imap_in
+mon.value_imap_in
 
    imap mail client sessions (in).
 
-  mon.av_imap_in
+mon.av_imap_in
 
    imap mail client sessions (in).
 
-  mon.dev_imap_in
+mon.dev_imap_in
 
    imap mail client sessions (in).
 
-  mon.value_imap_out
+mon.value_imap_out
 
    imap mail client sessions (out).
 
-  mon.av_imap_out
+mon.av_imap_out
 
    imap mail client sessions (out).
 
-  mon.dev_imap_out
+mon.dev_imap_out
 
    imap mail client sessions (out).
 
-  mon.value_cfengine_in
+mon.value_cfengine_in
 
    cfengine connections (in).
 
-  mon.av_cfengine_in
+mon.av_cfengine_in
 
    cfengine connections (in).
 
-  mon.dev_cfengine_in
+mon.dev_cfengine_in
 
    cfengine connections (in).
 
-  mon.value_cfengine_out
+mon.value_cfengine_out
 
    cfengine connections (out).
 
-  mon.av_cfengine_out
+mon.av_cfengine_out
 
    cfengine connections (out).
 
-  mon.dev_cfengine_out
+mon.dev_cfengine_out
 
    cfengine connections (out).
 
-  mon.value_nfsd_in
+mon.value_nfsd_in
 
    nfs connections (in).
 
-  mon.av_nfsd_in
+mon.av_nfsd_in
 
    nfs connections (in).
 
-  mon.dev_nfsd_in
+mon.dev_nfsd_in
 
    nfs connections (in).
 
-  mon.value_nfsd_out
+mon.value_nfsd_out
 
    nfs connections (out).
 
-  mon.av_nfsd_out
+mon.av_nfsd_out
 
    nfs connections (out).
 
-  mon.dev_nfsd_out
+mon.dev_nfsd_out
 
    nfs connections (out).
 
-  mon.value_smtp_in
+mon.value_smtp_in
 
    smtp connections (in).
 
-  mon.av_smtp_in
+mon.av_smtp_in
 
    smtp connections (in).
 
-  mon.dev_smtp_in
+mon.dev_smtp_in
 
    smtp connections (in).
 
-  mon.value_smtp_out
+mon.value_smtp_out
 
    smtp connections (out).
 
-  mon.av_smtp_out
+mon.av_smtp_out
 
    smtp connections (out).
 
-  mon.dev_smtp_out
+mon.dev_smtp_out
 
    smtp connections (out).
 
-  mon.value_www_in
+mon.value_www_in
 
    www connections (in).
 
-  mon.av_www_in
+mon.av_www_in
 
    www connections (in).
 
-  mon.dev_www_in
+mon.dev_www_in
 
    www connections (in).
 
-  mon.value_www_out
+mon.value_www_out
 
    www connections (out).
 
-  mon.av_www_out
+mon.av_www_out
 
    www connections (out).
 
-  mon.dev_www_out
+mon.dev_www_out
 
    www connections (out).
 
-  mon.value_ftp_in
+mon.value_ftp_in
 
    ftp connections (in).
 
-  mon.av_ftp_in
+mon.av_ftp_in
 
    ftp connections (in).
 
-  mon.dev_ftp_in
+mon.dev_ftp_in
 
    ftp connections (in).
 
-  mon.value_ftp_out
+mon.value_ftp_out
 
    ftp connections (out).
 
-  mon.av_ftp_out
+mon.av_ftp_out
 
    ftp connections (out).
 
-  mon.dev_ftp_out
+mon.dev_ftp_out
 
    ftp connections (out).
 
-  mon.value_ssh_in
+mon.value_ssh_in
 
    ssh connections (in).
 
-  mon.av_ssh_in
+mon.av_ssh_in
 
    ssh connections (in).
 
-  mon.dev_ssh_in
+mon.dev_ssh_in
 
    ssh connections (in).
 
-  mon.value_ssh_out
+mon.value_ssh_out
 
    ssh connections (out).
 
-  mon.av_ssh_out
+mon.av_ssh_out
 
    ssh connections (out).
 
-  mon.dev_ssh_out
+mon.dev_ssh_out
 
    ssh connections (out).
 
-  mon.value_wwws_in
+mon.value_wwws_in
 
    wwws connections (in).
 
-  mon.av_wwws_in
+mon.av_wwws_in
 
    wwws connections (in).
 
-  mon.dev_wwws_in
+mon.dev_wwws_in
 
    wwws connections (in).
 
-  mon.value_wwws_out
+mon.value_wwws_out
 
    wwws connections (out).
 
-  mon.av_wwws_out
+mon.av_wwws_out
 
    wwws connections (out).
 
-  mon.dev_wwws_out
+mon.dev_wwws_out
 
    wwws connections (out).
 
-  mon.value_icmp_in
+mon.value_icmp_in
 
    ICMP packets (in).
 
-  mon.av_icmp_in
+mon.av_icmp_in
 
    ICMP packets (in).
 
-  mon.dev_icmp_in
+mon.dev_icmp_in
 
    ICMP packets (in).
 
-  mon.value_icmp_out
+mon.value_icmp_out
 
    ICMP packets (out).
 
-  mon.av_icmp_out
+mon.av_icmp_out
 
    ICMP packets (out).
 
-  mon.dev_icmp_out
+mon.dev_icmp_out
 
    ICMP packets (out).
 
-  mon.value_udp_in
+mon.value_udp_in
 
    UDP dgrams (in).
 
-  mon.av_udp_in
+mon.av_udp_in
 
    UDP dgrams (in).
 
-  mon.dev_udp_in
+mon.dev_udp_in
 
    UDP dgrams (in).
 
-  mon.value_udp_out
+mon.value_udp_out
 
    UDP dgrams (out).
 
-  mon.av_udp_out
+mon.av_udp_out
 
    UDP dgrams (out).
 
-  mon.dev_udp_out
+mon.dev_udp_out
 
    UDP dgrams (out).
 
-  mon.value_dns_in
+mon.value_dns_in
 
    DNS requests (in).
 
-  mon.av_dns_in
+mon.av_dns_in
 
    DNS requests (in).
 
-  mon.dev_dns_in
+mon.dev_dns_in
 
    DNS requests (in).
 
-  mon.value_dns_out
+mon.value_dns_out
 
    DNS requests (out).
 
-  mon.av_dns_out
+mon.av_dns_out
 
    DNS requests (out).
 
-  mon.dev_dns_out
+mon.dev_dns_out
 
    DNS requests (out).
 
-  mon.value_tcpsyn_in
+mon.value_tcpsyn_in
 
    TCP sessions (in).
 
-  mon.av_tcpsyn_in
+mon.av_tcpsyn_in
 
    TCP sessions (in).
 
-  mon.dev_tcpsyn_in
+mon.dev_tcpsyn_in
 
    TCP sessions (in).
 
-  mon.value_tcpsyn_out
+mon.value_tcpsyn_out
 
    TCP sessions (out).
 
-  mon.av_tcpsyn_out
+mon.av_tcpsyn_out
 
    TCP sessions (out).
 
-  mon.dev_tcpsyn_out
+mon.dev_tcpsyn_out
 
    TCP sessions (out).
 
-  mon.value_tcpack_in
+mon.value_tcpack_in
 
    TCP acks (in).
 
-  mon.av_tcpack_in
+mon.av_tcpack_in
 
    TCP acks (in).
 
-  mon.dev_tcpack_in
+mon.dev_tcpack_in
 
    TCP acks (in).
 
-  mon.value_tcpack_out
+mon.value_tcpack_out
 
    TCP acks (out).
 
-  mon.av_tcpack_out
+mon.av_tcpack_out
 
    TCP acks (out).
 
-  mon.dev_tcpack_out
+mon.dev_tcpack_out
 
    TCP acks (out).
 
-  mon.value_tcpfin_in
+mon.value_tcpfin_in
 
    TCP finish (in).
 
-  mon.av_tcpfin_in
+mon.av_tcpfin_in
 
    TCP finish (in).
 
-  mon.dev_tcpfin_in
+mon.dev_tcpfin_in
 
    TCP finish (in).
 
-  mon.value_tcpfin_out
+mon.value_tcpfin_out
 
    TCP finish (out).
 
-  mon.av_tcpfin_out
+mon.av_tcpfin_out
 
    TCP finish (out).
 
-  mon.dev_tcpfin_out
+mon.dev_tcpfin_out
 
    TCP finish (out).
 
-  mon.value_tcpmisc_in
+mon.value_tcpmisc_in
 
    TCP misc (in).
 
-  mon.av_tcpmisc_in
+mon.av_tcpmisc_in
 
    TCP misc (in).
 
-  mon.dev_tcpmisc_in
+mon.dev_tcpmisc_in
 
    TCP misc (in).
 
-  mon.value_tcpmisc_out
+mon.value_tcpmisc_out
 
    TCP misc (out).
 
-  mon.av_tcpmisc_out
+mon.av_tcpmisc_out
 
    TCP misc (out).
 
-  mon.dev_tcpmisc_out
+mon.dev_tcpmisc_out
 
    TCP misc (out).
 
-  mon.value_webaccess
+mon.value_webaccess
 
    Webserver hits.
 
-  mon.av_webaccess
+mon.av_webaccess
 
    Webserver hits.
 
-  mon.dev_webaccess
+mon.dev_webaccess
 
    Webserver hits.
 
-  mon.value_weberrors
+mon.value_weberrors
 
    Webserver errors.
 
-  mon.av_weberrors
+mon.av_weberrors
 
    Webserver errors.
 
-  mon.dev_weberrors
+mon.dev_weberrors
 
    Webserver errors.
 
-  mon.value_syslog
+mon.value_syslog
 
    New log entries (Syslog).
 
-  mon.av_syslog
+mon.av_syslog
 
    New log entries (Syslog).
 
-  mon.dev_syslog
+mon.dev_syslog
 
    New log entries (Syslog).
 
-  mon.value_messages
+mon.value_messages
 
    New log entries (messages).
 
-  mon.av_messages
+mon.av_messages
 
    New log entries (messages).
 
-  mon.dev_messages
+mon.dev_messages
 
    New log entries (messages).
 
-  mon.value_temp0
+mon.value_temp0
 
    CPU Temperature 0.
 
-  mon.av_temp0
+mon.av_temp0
 
    CPU Temperature 0.
 
-  mon.dev_temp0
+mon.dev_temp0
 
    CPU Temperature 0.
 
-  mon.value_temp1
+mon.value_temp1
 
    CPU Temperature 1.
 
-  mon.av_temp1
+mon.av_temp1
 
    CPU Temperature 1.
 
-  mon.dev_temp1
+mon.dev_temp1
 
    CPU Temperature 1.
 
-  mon.value_temp2
+mon.value_temp2
 
    CPU Temperature 2.
 
-  mon.av_temp2
+mon.av_temp2
 
    CPU Temperature 2.
 
-  mon.dev_temp2
+mon.dev_temp2
 
    CPU Temperature 2.
 
-  mon.value_temp3
+mon.value_temp3
 
    CPU Temperature 3.
 
-  mon.av_temp3
+mon.av_temp3
 
    CPU Temperature 3.
 
-  mon.dev_temp3
+mon.dev_temp3
 
    CPU Temperature 3.
 
-  mon.value_cpu
+mon.value_cpu
 
    %CPU utilization (all).
 
-  mon.av_cpu
+mon.av_cpu
 
    %CPU utilization (all).
 
-  mon.dev_cpu
+mon.dev_cpu
 
    %CPU utilization (all).
 
-  mon.value_cpu0
+mon.value_cpu0
 
    %CPU utilization 0.
 
-  mon.av_cpu0
+mon.av_cpu0
 
    %CPU utilization 0.
 
-  mon.dev_cpu0
+mon.dev_cpu0
 
    %CPU utilization 0.
 
-  mon.value_cpu1
+mon.value_cpu1
 
    %CPU utilization 1.
 
-  mon.av_cpu1
+mon.av_cpu1
 
    %CPU utilization 1.
 
-  mon.dev_cpu1
+mon.dev_cpu1
 
    %CPU utilization 1.
 
-  mon.value_cpu2
+mon.value_cpu2
 
    %CPU utilization 2.
 
-  mon.av_cpu2
+mon.av_cpu2
 
    %CPU utilization 2.
 
-  mon.dev_cpu2
+mon.dev_cpu2
 
    %CPU utilization 2.
 
-  mon.value_cpu3
+mon.value_cpu3
 
    %CPU utilization 3.
 
-  mon.av_cpu3
+mon.av_cpu3
 
    %CPU utilization 3.
 
-  mon.dev_cpu3
+mon.dev_cpu3
 
    %CPU utilization 3.
 
-  mon.value_microsoft_ds_in
+mon.value_microsoft_ds_in
 
    Samba/MS_ds name sessions (in).
 
-  mon.av_microsoft_ds_in
+mon.av_microsoft_ds_in
 
    Samba/MS_ds name sessions (in).
 
-  mon.dev_microsoft_ds_in
+mon.dev_microsoft_ds_in
 
    Samba/MS_ds name sessions (in).
 
-  mon.value_microsoft_ds_out
+mon.value_microsoft_ds_out
 
    Samba/MS_ds name sessions (out).
 
-  mon.av_microsoft_ds_out
+mon.av_microsoft_ds_out
 
    Samba/MS_ds name sessions (out).
 
-  mon.dev_microsoft_ds_out
+mon.dev_microsoft_ds_out
 
    Samba/MS_ds name sessions (out).
 
-  mon.value_www_alt_in
+mon.value_www_alt_in
 
    Alternative web service connections (in).
 
-  mon.av_www_alt_in
+mon.av_www_alt_in
 
    Alternative web service connections (in).
 
-  mon.dev_www_alt_in
+mon.dev_www_alt_in
 
    Alternative web service connections (in).
 
-  mon.value_www_alt_out
+mon.value_www_alt_out
 
    Alternative web client connections (out).
 
-  mon.av_www_alt_out
+mon.av_www_alt_out
 
    Alternative web client connections (out).
 
-  mon.dev_www_alt_out
+mon.dev_www_alt_out
 
    Alternative web client connections (out).
 
-  mon.value_imaps_in
+mon.value_imaps_in
 
    encrypted imap mail service sessions (in).
 
-  mon.av_imaps_in
+mon.av_imaps_in
 
    encrypted imap mail service sessions (in).
 
-  mon.dev_imaps_in
+mon.dev_imaps_in
 
    encrypted imap mail service sessions (in).
 
-  mon.value_imaps_out
+mon.value_imaps_out
 
    encrypted imap mail client sessions (out).
 
-  mon.av_imaps_out
+mon.av_imaps_out
 
    encrypted imap mail client sessions (out).
 
-  mon.dev_imaps_out
+mon.dev_imaps_out
 
    encrypted imap mail client sessions (out).
 
-  mon.value_ldap_in
+mon.value_ldap_in
 
    LDAP directory service service sessions (in).
 
-  mon.av_ldap_in
+mon.av_ldap_in
 
    LDAP directory service service sessions (in).
 
-  mon.dev_ldap_in
+mon.dev_ldap_in
 
    LDAP directory service service sessions (in).
 
-  mon.value_ldap_out
+mon.value_ldap_out
 
    LDAP directory service client sessions (out).
 
-  mon.av_ldap_out
+mon.av_ldap_out
 
    LDAP directory service client sessions (out).
 
-  mon.dev_ldap_out
+mon.dev_ldap_out
 
    LDAP directory service client sessions (out).
 
-  mon.value_ldaps_in
+mon.value_ldaps_in
 
    LDAP directory service service sessions (in).
 
-  mon.av_ldaps_in
+mon.av_ldaps_in
 
    LDAP directory service service sessions (in).
 
-  mon.dev_ldaps_in
+mon.dev_ldaps_in
 
    LDAP directory service service sessions (in).
 
-  mon.value_ldaps_out
+mon.value_ldaps_out
 
    LDAP directory service client sessions (out).
 
-  mon.av_ldaps_out
+mon.av_ldaps_out
 
    LDAP directory service client sessions (out).
 
-  mon.dev_ldaps_out
+mon.dev_ldaps_out
 
    LDAP directory service client sessions (out).
 
-  mon.value_mongo_in
+mon.value_mongo_in
 
    Mongo database service sessions (in).
 
-  mon.av_mongo_in
+mon.av_mongo_in
 
    Mongo database service sessions (in).
 
-  mon.dev_mongo_in
+mon.dev_mongo_in
 
    Mongo database service sessions (in).
 
-  mon.value_mongo_out
+mon.value_mongo_out
 
    Mongo database client sessions (out).
 
-  mon.av_mongo_out
+mon.av_mongo_out
 
    Mongo database client sessions (out).
 
-  mon.dev_mongo_out
+mon.dev_mongo_out
 
    Mongo database client sessions (out).
 
-  mon.value_mysql_in
+mon.value_mysql_in
 
    MySQL database service sessions (in).
 
-  mon.av_mysql_in
+mon.av_mysql_in
 
    MySQL database service sessions (in).
 
-  mon.dev_mysql_in
+mon.dev_mysql_in
 
    MySQL database service sessions (in).
 
-  mon.value_mysql_out
+mon.value_mysql_out
 
    MySQL database client sessions (out).
 
-  mon.av_mysql_out
+mon.av_mysql_out
 
    MySQL database client sessions (out).
 
-  mon.dev_mysql_out
+mon.dev_mysql_out
 
    MySQL database client sessions (out).
 
-  mon.value_postgres_in
+mon.value_postgres_in
 
    PostgreSQL database service sessions (in).
 
-  mon.av_postgres_in
+mon.av_postgres_in
 
    PostgreSQL database service sessions (in).
 
-  mon.dev_postgres_in
+mon.dev_postgres_in
 
    PostgreSQL database service sessions (in).
 
-  mon.value_postgres_out
+mon.value_postgres_out
 
    PostgreSQL database client sessions (out).
 
-  mon.av_postgres_out
+mon.av_postgres_out
 
    PostgreSQL database client sessions (out).
 
-  mon.dev_postgres_out
+mon.dev_postgres_out
 
    PostgreSQL database client sessions (out).
 
-  mon.value_ipp_in
+mon.value_ipp_in
 
    Internet Printer Protocol (in).
 
-  mon.av_ipp_in
+mon.av_ipp_in
 
    Internet Printer Protocol (in).
 
-  mon.dev_ipp_in
+mon.dev_ipp_in
 
    Internet Printer Protocol (in).
 
-  mon.value_ipp_out
+mon.value_ipp_out
 
    Internet Printer Protocol (out).
 
-  mon.av_ipp_out
+mon.av_ipp_out
 
    Internet Printer Protocol (out).
 
-  mon.dev_ipp_out
+mon.dev_ipp_out
 
    Internet Printer Protocol (out).
 
-   -^
-*cf3-const*
+==============================================================================
+const                                                              *cf3-const*
 
-   CFEngine defines a number of variables for embedding unprintable values or
-   values with special meanings in strings.
+   CFEngine defines a number of variables for embedding unprintable
+   values or values with special meanings in strings.
 
-  const.dollar
+const.dollar
 
-     reports:
+    reports:
 
-        # This will report: The value of $(const.dollar) is $
-        "The value of $(const.dollar)(const.dollar) is $(const.dollar)";
+       # This will report: The value of $(const.dollar) is $
+       "The value of $(const.dollar)(const.dollar) is $(const.dollar)";
 
-        # This will report: But the value of $(dollar) is $(dollar)
-        "But the value of $(dollar) is $(dollar)";
+       # This will report: But the value of $(dollar) is $(dollar)
+       "But the value of $(dollar) is $(dollar)";
 
-  const.endl
+const.endl
 
-     reports:
+    reports:
 
-       "A newline with either $(const.n) or with $(const.endl) is ok";
-       "But a string with \n in it does not have a newline!";
+      "A newline with either $(const.n) or with $(const.endl) is ok";
+      "But a string with \n in it does not have a newline!";
 
-  const.n
+const.n
 
-     reports:
+    reports:
 
-       "A newline with either $(const.n) or with $(const.endl) is ok";
-       "But a string with \n in it does not have a newline!";
+      "A newline with either $(const.n) or with $(const.endl) is ok";
+      "But a string with \n in it does not have a newline!";
 
-  const.r
+const.r
 
-     reports:
+    reports:
 
-       "A carriage return character is $(const.r)";
+      "A carriage return character is $(const.r)";
 
-  const.t
+const.t
 
-     reports:
+    reports:
 
-       "A report with a$(const.t)tab in it";
+      "A report with a$(const.t)tab in it";
 
-   -^
-*cf3-match*
+==============================================================================
+match                                                              *cf3-match*
 
    Each time CFEngine matches a string, these values are assigned to a
-   special variable context $(match.*n*). The fragments can be referred to in
-   the remainder of the promise. There are two places where this makes sense.
-   One is in pattern replacement during file editing, and the other is in
-   searching for files.
+   special variable context $(match.*n*). The fragments can be referred
+   to in the remainder of the promise. There are two places where this
+   makes sense. One is in pattern replacement during file editing, and
+   the other is in searching for files.
+    bundle agent testbundle
+    {
+    files:
 
-     bundle agent testbundle
-     {
-     files:
+      "/home/mark/tmp/(cf[23])_(.*)"
+           create    => "true",
+           edit_line => myedit("second $(match.2)");
 
-       "/home/mark/tmp/(cf[23])_(.*)"
-            create    => "true",
-            edit_line => myedit("second $(match.2)");
+      # but more specifically...
 
-       # but more specifically...
+      "/home/mark/tmp/cf3_(test)"
+           create    => "true",
+           edit_line => myedit("second $(match.1)");
+    }
 
-       "/home/mark/tmp/cf3_(test)"
-            create    => "true",
-            edit_line => myedit("second $(match.1)");
-     }
-
-  match.0
+match.0
 
    A string matching the complete regular expression whether or not
    back-references were used in the pattern.
 
-   -^
-*cf3-edit*
+==============================================================================
+edit                                                                *cf3-edit*
 
-   This context is used to access information about editing promises during
-   their execution. It is context dependent and not universally meaningful or
-   available.
+   This context is used to access information about editing promises
+   during their execution. It is context dependent and not universally
+   meaningful or available.
+    bundle agent testbundle
+    {
+    files:
 
-     bundle agent testbundle
-     {
-     files:
+      "/tmp/testfile"
+         edit_line => test;
+    }
 
-       "/tmp/testfile"
-          edit_line => test;
-     }
+    #
 
-     #
+    bundle edit_line test
+    {
+    classes:
+        "ok" expression => regline(".*mark.*","$(edit.filename)");
 
-     bundle edit_line test
-     {
-     classes:
-         "ok" expression => regline(".*mark.*","$(edit.filename)");
+    reports:
 
-     reports:
+      ok::
+       "File matched $(edit.filename)";
+    }
 
-       ok::
-        "File matched $(edit.filename)";
-     }
+edit.filename
 
-  edit.filename
+   This variable points to the filename of the file currently making an
+   edit promise. If the file has been arrived at through a search, this
+   could be different from the files promiser.
 
-   This variable points to the filename of the file currently making an edit
-   promise. If the file has been arrived at through a search, this could be
-   different from the files promiser.
+==============================================================================
+this                                                                *cf3-this*
 
-   -^
-*cf3-this*
+   The context this is used to access information about promises during
+   their execution. It is context dependent and not universally
+   meaningful or available, but provides a context for variables where
+   one is needed (such as when passing the value of a list variable into
+   a parameterized edit_line promise from a files promise).
+    bundle agent resolver(s,n)
+    {
+    files:
+      "$(sys.resolv)"
 
-   The context this is used to access information about promises during their
-   execution. It is context dependent and not universally meaningful or
-   available, but provides a context for variables where one is needed (such
-   as when passing the value of a list variable into a parameterized
-   edit_line promise from a files promise).
+          create        => "true",
+          edit_line     => doresolv("@(this.s)","@(this.n)"),
+          edit_defaults => reconstruct;
+    }
 
-     bundle agent resolver(s,n)
-     {
-     files:
-       "$(sys.resolv)"
+   Note that every unqualified variable is automatically considered to
+   be in context this, so that a reference to the variable $(foo) is
+   identical to referencing $(this.foo). You are strongly encouraged to
+   not take advantage of this behavior, but simply to be aware that if
+   you attempt to declare a variable name with one of the following
+   special reserved names, CFEngine will issue a warning (and you can
+   reference your variable by qualifying it with the bundle name in
+   which it is declared).
 
-           create        => "true",
-           edit_line     => doresolv("@(this.s)","@(this.n)"),
-           edit_defaults => reconstruct;
-     }
-
-   Note that every unqualified variable is automatically considered to be in
-   context this, so that a reference to the variable $(foo) is identical to
-   referencing $(this.foo). You are strongly encouraged to not take advantage
-   of this behavior, but simply to be aware that if you attempt to declare a
-   variable name with one of the following special reserved names, CFEngine
-   will issue a warning (and you can reference your variable by qualifying it
-   with the bundle name in which it is declared).
-
-  this.bundle
+this.bundle
 
    This variable contains the current bundle name.
 
-  this.handle
+this.handle
 
    This variable points to the promise handle of the currently handled
    promise; it is useful for referring to the intention in log messages.
 
-  this.namespace
+this.namespace
 
    This variable contains the current namespace name.
 
-  this.promise_filename
+this.promise_filename
 
-   This variable reveals the name of the file in which the current promise is
-   defined.
+   This variable reveals the name of the file in which the current
+   promise is defined.
 
-  this.promise_linenumber
+this.promise_linenumber
 
-   This variable reveals the line number in the file at which it is used. It
-   is useful to differentiate otherwise identical reports promises.
+   This variable reveals the line number in the file at which it is
+   used. It is useful to differentiate otherwise identical reports
+   promises.
 
-  this.promiser
+this.promiser
 
    The special variable $(this.promiser) is used to refer to the current
-   value of the promiser itself, in a number of allowed cases, typically when
-   searches can take place. Current promise types that define
+   value of the promiser itself, in a number of allowed cases, typically
+   when searches can take place. Current promise types that define
    $(this.promiser) are: files, processes, commands.
 
-   This variable is useful in files promises, for instance when using pattern
-   matching or depth_search that implicitly match multiple objects. In that
-   case, $(this.promiser) refers to the currently identified file that makes
-   the promise. For example:
+   This variable is useful in files promises, for instance when using
+   pattern matching or depth_search that implicitly match multiple
+   objects. In that case, $(this.promiser) refers to the currently
+   identified file that makes the promise. For example:
+    bundle agent find666
+    {
+    files:
+      "/home"
+        file_select => world_writeable,
+        transformer => "/bin/echo DETECTED $(this.promiser)",
+        depth_search => recurse("inf");
 
-     bundle agent find666
-     {
-     files:
-       "/home"
-         file_select => world_writeable,
-         transformer => "/bin/echo DETECTED $(this.promiser)",
-         depth_search => recurse("inf");
+      "/etc/.*"
+        file_select => world_writeable,
+        transformer => "/bin/echo DETECTED $(this.promiser)";
+    }
 
-       "/etc/.*"
-         file_select => world_writeable,
-         transformer => "/bin/echo DETECTED $(this.promiser)";
-     }
+    body file_select world_writeable
+    {
+      search_mode => { "o+w" };
+      file_result => "mode";
+    }
 
-     body file_select world_writeable
-     {
-       search_mode => { "o+w" };
-       file_result => "mode";
-     }
+this.service_policy
 
-  this.service_policy
+   In a services promise, this variable is set to the value of the
+   promise attribute service_policy. For example:
+    services:
 
-   In a services promise, this variable is set to the value of the promise
-   attribute service_policy. For example:
+      "www"  service_policy => "start";
+      service_bundle => non_standard_services;
 
-     services:
+   This is typically used in the adaptations for custom services bundles
+   in the service methods.
 
-       "www"  service_policy => "start";
-       service_bundle => non_standard_services;
+this.this
 
-   This is typically used in the adaptations for custom services bundles in
-   the service methods.
+   From version 3.3.0 on, this variable is reserved. It is used by
+   functions like maplist() to represent the current object in a
+   transformation map.
 
-  this.this
+==============================================================================
+sys                                                                  *cf3-sys*
 
-   From version 3.3.0 on, this variable is reserved. It is used by functions
-   like maplist() to represent the current object in a transformation map.
+   System variables are derived from CFEngine's automated discovery of
+   system values. They are provided as variables in order to make
+   automatically adaptive rules for configuration.
+    files:
 
-   -^
-*cf3-sys*
+      "$(sys.resolv)"
 
-   System variables are derived from CFEngine's automated discovery of system
-   values. They are provided as variables in order to make automatically
-   adaptive rules for configuration.
+          create        => "true",
+          edit_line     => doresolv("@(this.list1)","@(this.list2)"),
+          edit_defaults => reconstruct;
 
-     files:
-
-       "$(sys.resolv)"
-
-           create        => "true",
-           edit_line     => doresolv("@(this.list1)","@(this.list2)"),
-           edit_defaults => reconstruct;
-
-  sys.arch
+sys.arch
 
    The variable gives the kernel's short architecture description.
+    # arch = x86_64
 
-     # arch = x86_64
+sys.cdate
 
-  sys.cdate
+   The date of the system in canonical form, i.e. in the form of a
+   class.
+    # cdate = Sun_Dec__7_10_39_53_2008_
 
-   The date of the system in canonical form, i.e. in the form of a class.
+sys.cf_promises
 
-     # cdate = Sun_Dec__7_10_39_53_2008_
+   A variable containing the path to the CFEngine syntax analyzer
+   cf-promises on the platform you are using.
+    classes:
 
-  sys.cf_promises
+      "syntax_ok" expression => returnszero("$(sys.cf_promises)");
 
-   A variable containing the path to the CFEngine syntax analyzer cf-promises
-   on the platform you are using.
-
-     classes:
-
-       "syntax_ok" expression => returnszero("$(sys.cf_promises)");
-
-  sys.cf_version
+sys.cf_version
 
    The variable gives the version of the running CFEngine Core.
+    # cf_version = 3.0.5
 
-     # cf_version = 3.0.5
-
-  sys.cf_version_major
+sys.cf_version_major
 
    The variable gives the major version of the running CFEngine Core.
-
-     # cf_version = 3.0.5
-     # cf_version_major = 3
+    # cf_version = 3.0.5
+    # cf_version_major = 3
 
    History: Was introduced in 3.5.1, Enterprise 3.5.1.
 
-  sys.cf_version_minor
+sys.cf_version_minor
 
    The variable gives the minor version of the running CFEngine Core.
-
-     # cf_version = 3.0.5
-     # cf_version_minor = 0
+    # cf_version = 3.0.5
+    # cf_version_minor = 0
 
    History: Was introduced in 3.5.1, Enterprise 3.5.1.
 
-  sys.cf_version_patch
+sys.cf_version_patch
 
    The variable gives the patch version of the running CFEngine Core.
-
-     # cf_version = 3.0.5
-     # cf_version_patch = 5
+    # cf_version = 3.0.5
+    # cf_version_patch = 5
 
    History: Was introduced in 3.5.1, Enterprise 3.5.1.
 
-  sys.class
+sys.class
 
-   This variable contains the name of the hard-class category for this host
-   (i.e. its top level operating system type classification).
-
-     # class = linux
+   This variable contains the name of the hard-class category for this
+   host (i.e. its top level operating system type classification).
+    # class = linux
 
    See also: sys.os
 
-  sys.cpus
+sys.cpus
 
-   A variable containing the number of CPU cores detected. On systems which
-   provide virtual cores, it is set to the total number of virtual, not
-   physical, cores. In addition, on a single-core system the class 1_cpu is
-   set, and on multi-core systems the class n_cpus is set, where n is the
-   number of cores identified.
+   A variable containing the number of CPU cores detected. On systems
+   which provide virtual cores, it is set to the total number of
+   virtual, not physical, cores. In addition, on a single-core system
+   the class 1_cpu is set, and on multi-core systems the class n_cpus is
+   set, where n is the number of cores identified.
+    reports:
 
-     reports:
-
-      "Number of CPUS = $(sys.cpus)";
-      8_cpus::
-        "This system has 8 processors.";
+     "Number of CPUS = $(sys.cpus)";
+     8_cpus::
+       "This system has 8 processors.";
 
    History: Was introduced in 3.3.0, Enterprise 2.2.0 (2012)
 
-  sys.crontab
+sys.crontab
 
    The variable gives the location of the current users's master crontab
    directory.
+    # crontab = /var/spool/crontab/root
 
-     # crontab = /var/spool/crontab/root
-
-  sys.date
+sys.date
 
    The date of the system as a text string.
+    # date = Sun Dec  7 10:39:53 2008
 
-     # date = Sun Dec  7 10:39:53 2008
+sys.doc_root
 
-  sys.doc_root
-
-   A scalar variable containing the default path for the document root of the
-   standard web server package.
+   A scalar variable containing the default path for the document root
+   of the standard web server package.
 
    History: Was introduced in 3.1.0, Enterprise 2.0.
 
-  sys.domain
+sys.domain
 
-   The domain name as discovered by CFEngine. If the DNS is in use, it could
-   be possible to derive the domain name from its DNS registration, but in
-   general there is no way to discover this value automatically. The common
-   control body permits the ultimate specification of this value.
+   The domain name as discovered by CFEngine. If the DNS is in use, it
+   could be possible to derive the domain name from its DNS
+   registration, but in general there is no way to discover this value
+   automatically. The common control body permits the ultimate
+   specification of this value.
+    # domain = example.org
 
-     # domain = example.org
+sys.enterprise_version
 
-  sys.enterprise_version
-
-   The variable gives the version of the running CFEngine Enterprise Edition.
-
-     # enterprise_version = 3.0.0
+   The variable gives the version of the running CFEngine Enterprise
+   Edition.
+    # enterprise_version = 3.0.0
 
    History: Was introduced in 3.5.0, Enterprise 3.0.0
 
-  sys.expires
+sys.expires
 
-     reports:
+    reports:
 
-      enterprise::
+     enterprise::
 
-       "License expires $(sys.expires)";
+      "License expires $(sys.expires)";
 
-  sys.exports
+sys.exports
 
    The location of the system NFS exports file.
+    # exports = /etc/exports
+    # exports = /etc/dfs/dfstab
 
-     # exports = /etc/exports
-     # exports = /etc/dfs/dfstab
+sys.flavor, sys.flavour
 
-  sys.flavor, sys.flavour
-
-   A variable containing an operating system identification string that is
-   used to determine the current release of the operating system in a form
-   that can be used as a label in naming. This is used, for instance, to
-   detect which package name to choose when updating software binaries for
-   CFEngine.
+   A variable containing an operating system identification string that
+   is used to determine the current release of the operating system in a
+   form that can be used as a label in naming. This is used, for
+   instance, to detect which package name to choose when updating
+   software binaries for CFEngine.
 
    These two variables are synonyms for each other.
 
@@ -1257,90 +1244,83 @@
 
    See also: sys.ostype
 
-  sys.fqhost
+sys.fqhost
 
    The fully qualified name of the host. In order to compute this value
    properly, the domain name must be defined.
-
-     # fqhost = host.example.org
+    # fqhost = host.example.org
 
    See also: sys.uqhost
 
-  sys.fstab
+sys.fstab
 
    The location of the system filesystem (mount) table.
+    # fstab = /etc/fstab
 
-     # fstab = /etc/fstab
+sys.hardware_addresses
 
-  sys.hardware_addresses
-
-   This is a list variable containing a list of all known MAC addresses for
-   system interfaces.
+   This is a list variable containing a list of all known MAC addresses
+   for system interfaces.
 
    History: Was introduced in 3.3.0, Enterprise 2.2.0 (2011)
 
-  sys.hardware_mac[interface_name]
+sys.hardware_mac[interface_name]
 
    This contains the MAC address of the named interface. For example:
-
-     reports:
-         "Tell me $(harware_mac[eth0])";
+    reports:
+        "Tell me $(harware_mac[eth0])";
 
    History: Was introduced in 3.3.0, Enterprise 2.2.0 (2011)
 
-  sys.host
+sys.host
 
-   The name of the current host, according to the kernel. It is undefined
-   whether this is qualified or unqualified with a domain name.
+   The name of the current host, according to the kernel. It is
+   undefined whether this is qualified or unqualified with a domain
+   name.
+    # host = myhost
 
-     # host = myhost
-
-  sys.interface
+sys.interface
 
    The assumed (default) name of the main system interface on this host.
+    # interface = eth0
 
-     # interface = eth0
+sys.interfaces
 
-  sys.interfaces
+   Displays a system list of configured interfaces currently active in
+   use by the system. This list is detected at runtime and it passed in
+   the variables report to the CFEngine Enterprise Database.
 
-   Displays a system list of configured interfaces currently active in use by
-   the system. This list is detected at runtime and it passed in the
-   variables report to the CFEngine Enterprise Database.
+   To use this list in a policy, you will need a local copy since only
+   local variables can be iterated.
+    bundle agent test
+    {
+    vars:
 
-   To use this list in a policy, you will need a local copy since only local
-   variables can be iterated.
+     # To iterate, we need a local copy
 
-     bundle agent test
-     {
-     vars:
+     "i1" slist => { @(sys.ip_addresses)} ;
+     "i2" slist => { @(sys.interfaces)} ;
 
-      # To iterate, we need a local copy
+    reports:
 
-      "i1" slist => { @(sys.ip_addresses)} ;
-      "i2" slist => { @(sys.interfaces)} ;
-
-     reports:
-
-         "Addresses: $(i1)";
-         "Interfaces: $(i2)";
-         "Addresses of the interfaces: $(sys.ipv4[$(i2)])";
-     }
+        "Addresses: $(i1)";
+        "Interfaces: $(i2)";
+        "Addresses of the interfaces: $(sys.ipv4[$(i2)])";
+    }
 
    History: Was introduced in 3.3.0, Enterprise 2.2.0 (2011)
 
-  sys.interface_flags
+sys.interface_flags
 
-   Contains a space separated list of the flags of the named interface. e.g.
-
-     reports:
-         "eth0 flags: $(sys.interface_flags[eth0])";
+   Contains a space separated list of the flags of the named interface.
+   e.g.
+    reports:
+        "eth0 flags: $(sys.interface_flags[eth0])";
 
    Outputs:
-
- R: eth0 flags: up broadcast running multicast
+R: eth0 flags: up broadcast running multicast
 
    The following device flags are supported:
-
      * up
      * broadcast
      * debug
@@ -1355,221 +1335,206 @@
 
    History: Was introduced in 3.5.0 (2013)
 
-  sys.ip_addresses
+sys.ip_addresses
 
-   Displays a system list of IP addresses currently in use by the system.
-   This list is detected at runtime and passed in the variables report to the
-   CFEngine Enterprise Database.
+   Displays a system list of IP addresses currently in use by the
+   system. This list is detected at runtime and passed in the variables
+   report to the CFEngine Enterprise Database.
 
-   To use this list in a policy, you will need a local copy since only local
-   variables can be iterated.
+   To use this list in a policy, you will need a local copy since only
+   local variables can be iterated.
+    bundle agent test
+    {
+    vars:
 
-     bundle agent test
-     {
-     vars:
+     # To iterate, we need a local copy
 
-      # To iterate, we need a local copy
+     "i1" slist => { @(sys.ip_addresses)} ;
+     "i2" slist => { @(sys.interfaces)} ;
 
-      "i1" slist => { @(sys.ip_addresses)} ;
-      "i2" slist => { @(sys.interfaces)} ;
+    reports:
 
-     reports:
-
-         "Addresses: $(i1)";
-         "Interfaces: $(i2)";
-         "Addresses of the interfaces: $(sys.ipv4[$(i2)])";
-     }
+        "Addresses: $(i1)";
+        "Interfaces: $(i2)";
+        "Addresses of the interfaces: $(sys.ipv4[$(i2)])";
+    }
 
    History: Was introduced in 3.3.0, Enterprise 2.2.0 (2011)
 
-  sys.ipv4
+sys.ipv4
 
    All four octets of the IPv4 address of the first system interface.
 
    Note:
 
-   If your system has a single ethernet interface, $(sys.ipv4) will contain
-   your IPv4 address. However, if your system has multiple interfaces, then
-   $(sys.ipv4) will simply be the IPv4 address of the first interface in the
-   list that has an assigned address, Use $(sys.ipv4[interface_name]) for
-   details on obtaining the IPv4 addresses of all interfaces on a system.
+   If your system has a single ethernet interface, $(sys.ipv4) will
+   contain your IPv4 address. However, if your system has multiple
+   interfaces, then $(sys.ipv4) will simply be the IPv4 address of the
+   first interface in the list that has an assigned address, Use
+   $(sys.ipv4[interface_name]) for details on obtaining the IPv4
+   addresses of all interfaces on a system.
 
-  sys.ipv4[interface_name]
+sys.ipv4[interface_name]
 
-   The full IPv4 address of the system interface named as the associative
-   array index, e.g. $(ipv4[le0]) or $(ipv4[xr1]).
-
-     # If the IPv4 address on the interfaces are
-     #    le0 = 192.168.1.101
-     #    xr1 = 10.12.7.254
-     #
-     # Then the octets of all interfaces are accessible as an associative array
-     # ipv4_1[le0] = 192
-     # ipv4_2[le0] = 192.168
-     # ipv4_3[le0] = 192.168.1
-     #   ipv4[le0] = 192.168.1.101
-     # ipv4_1[xr1] = 10
-     # ipv4_2[xr1] = 10.12
-     # ipv4_3[xr1] = 10.12.7
-     #   ipv4[xr1] = 10.12.7.254
+   The full IPv4 address of the system interface named as the
+   associative array index, e.g. $(ipv4[le0]) or $(ipv4[xr1]).
+    # If the IPv4 address on the interfaces are
+    #    le0 = 192.168.1.101
+    #    xr1 = 10.12.7.254
+    #
+    # Then the octets of all interfaces are accessible as an associative array
+    # ipv4_1[le0] = 192
+    # ipv4_2[le0] = 192.168
+    # ipv4_3[le0] = 192.168.1
+    #   ipv4[le0] = 192.168.1.101
+    # ipv4_1[xr1] = 10
+    # ipv4_2[xr1] = 10.12
+    # ipv4_3[xr1] = 10.12.7
+    #   ipv4[xr1] = 10.12.7.254
 
    Note:
 
-   The list of interfaces may be acquired with getindices("sys.ipv4") (or
-   from any of the other associative arrays). Only those interfaces which are
-   marked as "up" and have an IP address will be listed.
+   The list of interfaces may be acquired with getindices("sys.ipv4")
+   (or from any of the other associative arrays). Only those interfaces
+   which are marked as "up" and have an IP address will be listed.
 
-  sys.ipv4_1[interface_name]
+sys.ipv4_1[interface_name]
 
-   The first octet of the IPv4 address of the system interface named as the
-   associative array index, e.g. $(ipv4_1[le0]) or $(ipv4_1[xr1]).
+   The first octet of the IPv4 address of the system interface named as
+   the associative array index, e.g. $(ipv4_1[le0]) or $(ipv4_1[xr1]).
 
-  sys.ipv4_2[interface_name]
+sys.ipv4_2[interface_name]
 
-   The first two octets of the IPv4 address of the system interface named as
-   the associative array index, e.g. $(ipv4_2[le0]) or $(ipv4_2[xr1]).
+   The first two octets of the IPv4 address of the system interface
+   named as the associative array index, e.g. $(ipv4_2[le0]) or
+   $(ipv4_2[xr1]).
 
-  sys.ipv4_3[interface_name]
+sys.ipv4_3[interface_name]
 
-   The first three octets of the IPv4 address of the system interface named
-   as the associative array index, e.g. $(ipv4_3[le0]) or $(ipv4_3[xr1]).
+   The first three octets of the IPv4 address of the system interface
+   named as the associative array index, e.g. $(ipv4_3[le0]) or
+   $(ipv4_3[xr1]).
 
-  sys.license_owner
+sys.license_owner
 
-     reports:
+    reports:
 
-      enterprise::
+     enterprise::
 
-       "This version of CFEngine is licensed to $(sys.license_owner)";
-
-   History: Was introduced in version 3.1.4,Enterprise 2.0.2 (2011)
-
-  sys.licenses_granted
-
-     reports:
-
-      enterprise::
-
-       "There are $(sys.licenses_granted) licenses granted for use";
+      "This version of CFEngine is licensed to $(sys.license_owner)";
 
    History: Was introduced in version 3.1.4,Enterprise 2.0.2 (2011)
 
-  sys.long_arch
+sys.licenses_granted
 
-   The long architecture name for this system kernel. This name is sometimes
-   quite unwieldy but can be useful for logging purposes.
+    reports:
 
-     # long_arch = linux_x86_64_2_6_22_19_0_1_default__1_SMP_2008_10_14_22_17_43__0200
+     enterprise::
+
+      "There are $(sys.licenses_granted) licenses granted for use";
+
+   History: Was introduced in version 3.1.4,Enterprise 2.0.2 (2011)
+
+sys.long_arch
+
+   The long architecture name for this system kernel. This name is
+   sometimes quite unwieldy but can be useful for logging purposes.
+    # long_arch = linux_x86_64_2_6_22_19_0_1_default__1_SMP_2008_10_14_22_17_4
+3__0200
 
    See also: sys.ostype
 
-  sys.maildir
+sys.maildir
 
    The name of the system email spool directory.
+    # maildir = /var/spool/mail
 
-     # maildir = /var/spool/mail
-
-  sys.os
+sys.os
 
    The name of the operating system according to the kernel.
-
-     # os = linux
+    # os = linux
 
    See also: sys.ostype
 
-  sys.ostype
+sys.ostype
 
    Another name for the operating system.
-
-     # ostype = linux_x86_64
+    # ostype = linux_x86_64
 
    See also: sys.class
 
-  sys.policy_hub
+sys.policy_hub
 
-   Hostname of the machine acting as the policy server. This value is set
-   during bootstrap. In case bootstrap was not performed, it is set to
-   undefined.
+   Hostname of the machine acting as the policy server. This value is
+   set during bootstrap. In case bootstrap was not performed, it is set
+   to undefined.
+    reports:
 
-     reports:
-
-      "Policy hub is $(sys.policy_hub)";
+     "Policy hub is $(sys.policy_hub)";
 
    History: Was introduced in version 3.1.0b1,Enterprise 2.0.0b1 (2010).
    Available in Community since 3.2.0
 
-  sys.release
+sys.release
 
    The kernel release of the operating system.
+    # release = 2.6.22.19-0.1-default
 
-     # release = 2.6.22.19-0.1-default
-
-  sys.resolv
+sys.resolv
 
    The location of the system resolver file.
+    # resolv = /etc/resolv.conf
 
-     # resolv = /etc/resolv.conf
-
-  sys.uqhost
+sys.uqhost
 
    The unqualified name of the current host.
-
-     # uqhost = myhost
+    # uqhost = myhost
 
    See also: sys.fqhost
 
-  sys.version
+sys.version
 
    The version of the running kernel. On Linux, this corresponds to the
    output of uname -v.
-
-     # version = #55-Ubuntu SMP Mon Jan 10 23:42:43 UTC 2011
+    # version = #55-Ubuntu SMP Mon Jan 10 23:42:43 UTC 2011
 
    History: Was introduced in version 3.1.4,Enterprise 2.0.2 (2011)
 
-  sys.windir
+sys.windir
 
-   On the Windows version of CFEngine Enterprise, this is the path to the
-   Windows directory of this system.
+   On the Windows version of CFEngine Enterprise, this is the path to
+   the Windows directory of this system.
+    # windir = C:\WINDOWS
 
-     # windir = C:\WINDOWS
+sys.winprogdir
 
-  sys.winprogdir
+   On the Windows version of CFEngine Enterprise, this is the path to
+   the program files directory of the system.
+    # winprogdir = C:\Program Files
 
-   On the Windows version of CFEngine Enterprise, this is the path to the
-   program files directory of the system.
+sys.winprogdir86
 
-     # winprogdir = C:\Program Files
+   On 64 bit Windows versions of CFEngine Enterprise, this is the path
+   to the 32 bit (x86) program files directory of the system.
+    # winprogdir86 = C:\Program Files (x86)
 
-  sys.winprogdir86
+sys.winsysdir
 
-   On 64 bit Windows versions of CFEngine Enterprise, this is the path to the
-   32 bit (x86) program files directory of the system.
+   On the Windows version of CFEngine Enterprise, this is the path to
+   the Windows system directory.
+    # winsysdir = C:\WINDOWS\system32
 
-     # winprogdir86 = C:\Program Files (x86)
-
-  sys.winsysdir
-
-   On the Windows version of CFEngine Enterprise, this is the path to the
-   Windows system directory.
-
-     # winsysdir = C:\WINDOWS\system32
-
-  sys.workdir
+sys.workdir
 
    The location of the CFEngine work directory and cache. For the system
    privileged user this is normally:
-
-     # workdir = /var/cfengine
+    # workdir = /var/cfengine
 
    For non-privileged users it is in the user's home directory:
-
-     # workdir = /home/user/.cfagent
+    # workdir = /home/user/.cfagent
 
    On the Windows version of CFEngine Enterprise, it is normally under
    program files (the directory name may change with the language of
    Windows):
+    # workdir = C:\Program Files\CFEngine
 
-     # workdir = C:\Program Files\CFEngine
-
-   -^
