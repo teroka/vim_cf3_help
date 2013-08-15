@@ -72,7 +72,9 @@ def docparser(url,func,multifunc=False):
         return
 
 def lynxdump(url):
-    p = subprocess.Popen(['lynx', '-dump', '-display_charset=us-ascii', '-nolist', '-nonumbers', '-width', str(help_width), url], shell=False, stdout=subprocess.PIPE)
+    p = subprocess.Popen(['lynx', '-dump', '-display_charset=us-ascii',
+        '-nolist', '-nonumbers', '-width',
+        str(help_width), url], shell=False, stdout=subprocess.PIPE)
     return p.stdout.read()
 
 def update_help(file,subdir):
@@ -101,7 +103,8 @@ def update_help(file,subdir):
             for var in trio:
                 mfunctags.append(fhelp[0] + var + fhelp[1])
             for i in mfunctags:
-                help_tag = '{0:>{1}}'.format('*' + help_tag_prefix + i + '*', help_width - len(headerstring))
+                help_tag = '{0:>{1}}'.format('*' + help_tag_prefix +
+                        i + '*', help_width - len(headerstring))
                 file.write('%s\n' % (help_tag))
                 # zero out the list so alignment holds
                 headerstring = []
@@ -116,8 +119,9 @@ def update_help(file,subdir):
             else:
                 headerstring = content[0]
             file.write('%s' % headerstring )
-            # align the vim help *tag* to the right side and use our set witdth.
-            help_tag = '{0:>{1}}'.format('*' + help_tag_prefix + plain + '*', help_width - len(headerstring))
+            # align the vim help *tag* to the right side and use our set width.
+            help_tag = '{0:>{1}}'.format('*' + help_tag_prefix +
+                    plain + '*', help_width - len(headerstring))
             file.write('%s\n' % (help_tag))
             del content[0]
             for i in content:
